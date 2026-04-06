@@ -1,10 +1,10 @@
-package backend.api_gateway;
+package backend.rating_service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ApiGatewayApplicationTests {
+class RatingServiceApplicationTests {
 
 	@Test
 	void contextLoads() {

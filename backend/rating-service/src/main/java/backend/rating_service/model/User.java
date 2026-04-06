@@ -1,12 +1,8 @@
-package backend.user_service.model;
-
-import java.util.ArrayList;
-import java.util.List;
+package backend.rating_service.model;
 
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
-import org.springframework.data.neo4j.core.schema.Relationship;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,8 +18,4 @@ public class User {
     private Long id;
     private String email;
     private String password;
-
-    @Relationship(type = "RATED", direction = Relationship.Direction.OUTGOING)
-    private List<Rated> ratings = new ArrayList<>();
-
 }

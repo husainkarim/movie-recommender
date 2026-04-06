@@ -1,13 +1,13 @@
-package backend.api_gateway;
+package backend.rating_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ApiGatewayApplication {
+public class RatingServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ApiGatewayApplication.class, args);
+		SpringApplication.run(RatingServiceApplication.class, args);
 	}
 
 }
