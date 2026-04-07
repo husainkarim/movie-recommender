@@ -17,7 +17,6 @@ import backend.recommendation_service.repository.MovieRepository;
 public class RecommendationController {
     private final MovieRepository movieRepository;
 
-    private static final String MESSAGE = "message";
     private static final String RECOMMENDATIONS = "recommendations";
 
     public RecommendationController(MovieRepository movieRepository) {
