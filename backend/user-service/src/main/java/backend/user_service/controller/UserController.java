@@ -77,7 +77,7 @@ public class UserController {
             response.put(MESSAGE, "Invalid email or password");
             return ResponseEntity.status(401).body(response);
         }
-        String token = jwtService.generateToken(existingUser.getId(), existingUser.getEmail());
+        String token = jwtService.generateToken(existingUser.getId(), existingUser.getEmail(), existingUser.getRole());
         response.put("token", token);
         response.put(MESSAGE, "Login successful");
         return ResponseEntity.ok().body(response);
