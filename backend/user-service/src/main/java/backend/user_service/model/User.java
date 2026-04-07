@@ -22,6 +22,7 @@ public class User {
     private Long id;
     private String email;
     private String password;
+    private String role;
 
     @Relationship(type = "RATED", direction = Relationship.Direction.OUTGOING)
     private List<Rated> ratings = new ArrayList<>();

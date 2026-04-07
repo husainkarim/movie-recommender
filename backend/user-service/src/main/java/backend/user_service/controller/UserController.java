@@ -37,12 +37,24 @@ public class UserController {
     @PostMapping("/auth/register")
     public ResponseEntity<Map<String, Object>> registerUser(@RequestBody User user) {
         Map<String, Object> response = new HashMap<>();
+        if (user.getEmail() == null || user.getEmail().isEmpty()) {
+            response.put(MESSAGE, "Email cannot be empty");
+            return ResponseEntity.badRequest().body(response);
+        }
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             response.put(MESSAGE, "Email already in use");
             return ResponseEntity.badRequest().body(response);
         }
         if (user.getPassword() == null || user.getPassword().isEmpty()) {
             response.put(MESSAGE, "Password cannot be empty");
+            return ResponseEntity.badRequest().body(response);
+        }
+        if (user.getPassword().length() < 6) {
+            response.put(MESSAGE, "Password must be at least 6 characters long");
+            return ResponseEntity.badRequest().body(response);
+        }
+        if (user.getRole() != null && !user.getRole().isEmpty() && !user.getRole().equals("USER") && !user.getRole().equals("ADMIN")) {
+            response.put(MESSAGE, "Invalid role. Allowed values are 'USER' or 'ADMIN'");
             return ResponseEntity.badRequest().body(response);
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
