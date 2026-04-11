@@ -15,7 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 import backend.user_service.model.User;
 import backend.user_service.repository.UserRepository;
 import backend.user_service.service.JwtService;
+import jakarta.annotation.security.PermitAll;
 
+import backend.user_service.dto.WatchListRequest;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
+import java.util.List;
+import backend.user_service.model.Movie;
 
 @RestController
 @RequestMapping("/api/users")
@@ -25,6 +31,7 @@ public class UserController {
     private final JwtService jwtService;
     
     private static final String MESSAGE = "message";
+    private static final String USER_NOT_FOUND = "User not found";
 
     public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.userRepository = userRepository;
@@ -34,6 +41,7 @@ public class UserController {
 
     // POST /auth/register: Create a new user node in Neo4j (or a relational DB if preferred, 
     // but keeping users in Neo4j allows for "Users who follow users" features later).
+    @PermitAll() // Allow anyone to access registration and login endpoints
     @PostMapping("/auth/register")
     public ResponseEntity<Map<String, Object>> registerUser(@RequestBody User user) {
         Map<String, Object> response = new HashMap<>();
@@ -64,6 +72,7 @@ public class UserController {
     }
 
     // POST /auth/login: Issue JWT tokens.
+    @PermitAll() // Allow anyone to access registration and login endpoints
     @PostMapping("/auth/login")
     public ResponseEntity<Map<String, Object>> loginUser(@RequestBody User user) {
         Map<String, Object> response = new HashMap<>();
@@ -91,12 +100,58 @@ public class UserController {
         Map<String, Object> response = new HashMap<>();
         var userOpt = userRepository.findById(id);
         if (userOpt.isEmpty()) {
-            response.put(MESSAGE, "User not found");
+            response.put(MESSAGE, USER_NOT_FOUND);
             return ResponseEntity.status(404).body(response);
         }
         var user = userOpt.get();
         response.put("user", user);
         response.put(MESSAGE, "User profile retrieved successfully");
+        return ResponseEntity.ok().body(response);
+    }
+
+    // add movie to watchlist
+    // POST /users/watchlist
+    @PostMapping("/watchlist")
+    public ResponseEntity<Map<String, Object>> addToWatchlist(@RequestBody WatchListRequest request) {
+        Map<String, Object> response = new HashMap<>();
+        var userOpt = userRepository.findById(request.getUserId());
+        if (userOpt.isEmpty()) {
+            response.put(MESSAGE, USER_NOT_FOUND);
+            return ResponseEntity.status(404).body(response);
+        }
+        userRepository.addToWatchlist(userOpt.get().getId(), request.getMovieId());
+        response.put(MESSAGE, "Movie added to watchlist");
+        return ResponseEntity.ok().body(response);
+    }
+
+    // remove movie from watchlist
+    // DELETE /users/watchlist
+    @DeleteMapping("/watchlist")
+    public ResponseEntity<Map<String, Object>> removeFromWatchlist(@RequestBody WatchListRequest request) {
+        Map<String, Object> response = new HashMap<>();
+        var userOpt = userRepository.findById(request.getUserId());
+        if (userOpt.isEmpty()) {
+            response.put(MESSAGE, USER_NOT_FOUND);
+            return ResponseEntity.status(404).body(response);
+        }
+        userRepository.removeFromWatchlist(userOpt.get().getId(), request.getMovieId());
+        response.put(MESSAGE, "Movie removed from watchlist");
+        return ResponseEntity.ok().body(response);
+    }
+
+    // get watchlist
+    // Get /user/{id}/watchlist
+    @GetMapping("/watchlist/{id}")
+    public ResponseEntity<Map<String, Object>> getWatchlist(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        var userOpt = userRepository.findById(id);
+        if (userOpt.isEmpty()) {
+            response.put(MESSAGE, USER_NOT_FOUND);
+            return ResponseEntity.status(404).body(response);
+        }
+        List<Movie> watchlist = userRepository.findWatchlistByUserId(userOpt.get().getId());
+        response.put("watchlist", watchlist);
+        response.put(MESSAGE, "Watchlist retrieved successfully");
         return ResponseEntity.ok().body(response);
     }
 }

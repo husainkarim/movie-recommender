@@ -80,7 +80,7 @@ public class MovieController {
         }
     }
     // POST /movies: Add new movies to Neo4j.
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<Map<String, Object>> addMovie(@RequestBody Movie movie) {
         Map<String, Object> response = new HashMap<>();
         try {

@@ -41,6 +41,9 @@ public class Movie {
     @Relationship(type = "DIRECTED", direction = Relationship.Direction.INCOMING)
     private Set<Person> directors = new HashSet<>();
 
+    @Relationship(type = "RATED", direction = Relationship.Direction.INCOMING)
+    private Set<Rated> ratings = new HashSet<>();
+
     public List<Map<String, Object>> getActors() {
         if (actedInRelationships == null) return Collections.emptyList();
         return actedInRelationships.stream()

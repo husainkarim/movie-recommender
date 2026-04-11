@@ -1,27 +1,20 @@
-package backend.user_service.model;
+package backend.movie_service.model;
 
-import java.util.Date;
-
-import org.springframework.data.neo4j.core.schema.RelationshipId;
 import org.springframework.data.neo4j.core.schema.RelationshipProperties;
-import org.springframework.data.neo4j.core.schema.TargetNode;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@RelationshipProperties
+import org.springframework.data.neo4j.core.schema.TargetNode;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@RelationshipProperties
 public class Rated {
-
-    @RelationshipId
     private Long id;
-    
     private Double rating; // e.g., 1.0 to 5.0
-    private Date timestamp= new Date();
 
     @TargetNode
-    private Movie movie;
+    private User user;
 }
