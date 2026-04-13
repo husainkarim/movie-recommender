@@ -1,0 +1,68 @@
+services:
+  user-service:
+    build: ./backend/user-service
+    image: backend/user-service:latest
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - external
+      - internal
+  
+  movie-service:
+    build: ./backend/movie-service
+    image: backend/movie-service:latest
+    environment:
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - external
+      - internal
+
+  rating-service:
+    build: ./backend/rating-service
+    image: backend/rating-service:latest
+    environment:
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - external
+      - internal
+  
+  recommendation-service:
+    build: ./backend/recommendation-service
+    image: backend/recommendation-service:latest
+    environment:
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - external
+      - internal
+
+  api-gateway:
+    build: ./backend/api-gateway
+    image: backend/api-gateway:latest
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      - user-service
+      - movie-service
+      - rating-service
+      - recommendation-service
+    networks:
+      - external
+      - internal
+
+networks:
+  internal:
+    internal: true
+  external:
+    driver: bridge

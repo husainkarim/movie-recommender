@@ -10,8 +10,6 @@ import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -31,7 +29,6 @@ public class User {
     @Email(message = "Email should be valid")
     private String email;
     @NotBlank
-    @JsonIgnore
     @Size(min=8, max=25, message="Password must be between 8 and 25 characters")
     private String password;
     @NotBlank

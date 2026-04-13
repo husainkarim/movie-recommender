@@ -1,1 +1,26 @@
-<p>search-bar works!</p>
+<section class="search-panel">
+	<div class="fields">
+		<input
+			type="text"
+			[(ngModel)]="criteria.title"
+			(ngModelChange)="onSearchChanged()"
+			placeholder="Search by title"
+		/>
+
+		<select [(ngModel)]="criteria.genre" (ngModelChange)="onSearchChanged()">
+			<option value="">All genres</option>
+			@for (genre of genres; track genre) {
+				<option [value]="genre">{{ genre }}</option>
+			}
+		</select>
+
+		<select [(ngModel)]="criteria.year" (ngModelChange)="onSearchChanged()">
+			<option value="">All years</option>
+			@for (year of years; track year) {
+				<option [value]="year">{{ year }}</option>
+			}
+		</select>
+	</div>
+
+	<button type="button" (click)="clearFilters()">Reset</button>
+</section>

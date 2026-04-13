@@ -1,1 +1,28 @@
-<p>watchlist-page works!</p>
+<section class="watchlist-page">
+	<h1>My Watchlist</h1>
+	<p class="subtitle">Save movies for later and share recommendations with friends.</p>
+
+	@if (shareMessage) {
+		<p class="share-message">{{ shareMessage }}</p>
+	}
+
+	@if (watchlist.length) {
+		<div class="watchlist-grid">
+			@for (movie of watchlist; track movie.id) {
+				<article class="watchlist-card">
+					<h2>{{ movie.title }}</h2>
+					<p>{{ movie.genres.join(' • ') }}</p>
+					<p>Release year: {{ movie.released }}</p>
+
+					<div class="actions">
+						<a [routerLink]="['/movies', movie.id]">Details</a>
+						<button type="button" (click)="removeFromWatchlist(movie.id)">Remove</button>
+						<button type="button" class="secondary" (click)="share(movie.id)">Share</button>
+					</div>
+				</article>
+			}
+		</div>
+	} @else {
+		<p class="empty-state">Your watchlist is empty. Add movies from the home page.</p>
+	}
+</section>

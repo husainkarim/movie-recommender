@@ -1,0 +1,90 @@
+.registration-page {
+	min-height: calc(100dvh - 2.5rem);
+	display: grid;
+	place-items: center;
+}
+
+.registration-card {
+	width: min(100%, 28rem);
+	padding: 2rem;
+	border-radius: 1rem;
+	background: #fff;
+	box-shadow: 0 12px 34px rgba(18, 38, 63, 0.12);
+}
+
+h1 {
+	margin: 0;
+	font-size: 1.75rem;
+	color: #1f2937;
+}
+
+.subtitle {
+	margin: 0.5rem 0 1.5rem;
+	color: #4b5563;
+}
+
+form {
+	display: grid;
+	gap: 0.5rem;
+}
+
+label {
+	margin-top: 0.75rem;
+	color: #374151;
+	font-weight: 600;
+	font-size: 0.95rem;
+}
+
+input {
+	width: 100%;
+	padding: 0.75rem 0.875rem;
+	border: 1px solid #cbd5e1;
+	border-radius: 0.625rem;
+	font-size: 0.95rem;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus {
+	outline: none;
+	border-color: #2563eb;
+	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+button {
+	margin-top: 1rem;
+	border: 0;
+	border-radius: 0.625rem;
+	padding: 0.8rem 1rem;
+	background: #2563eb;
+	color: #fff;
+	font-size: 1rem;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+button:hover {
+	background: #1d4ed8;
+}
+
+.error-message {
+	margin: 0;
+	color: #b91c1c;
+	font-size: 0.85rem;
+}
+
+.success-message {
+	margin: 1rem 0 0;
+	color: #047857;
+	font-weight: 600;
+}
+
+.switch-auth {
+	margin: 1rem 0 0;
+	color: #475569;
+}
+
+.switch-auth a {
+	color: #1d4ed8;
+	text-decoration: none;
+	font-weight: 600;
+}

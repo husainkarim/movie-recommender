@@ -1,0 +1,68 @@
+.subtitle {
+	margin: 0.35rem 0 1rem;
+	color: #475569;
+}
+
+.filters {
+	display: flex;
+	gap: 0.7rem;
+}
+
+.filters select {
+	border: 1px solid #cbd5e1;
+	border-radius: 0.55rem;
+	padding: 0.55rem 0.65rem;
+	background: #fff;
+}
+
+.share-message {
+	color: #0f766e;
+	font-weight: 600;
+}
+
+.cards {
+	margin-top: 0.8rem;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+	gap: 0.75rem;
+}
+
+.card {
+	background: #fff;
+	border: 1px solid #dbe3ef;
+	border-radius: 0.75rem;
+	padding: 0.9rem;
+}
+
+.card h2 {
+	margin: 0;
+}
+
+.card p {
+	margin: 0.35rem 0;
+	color: #334155;
+}
+
+.actions {
+	display: flex;
+	gap: 0.45rem;
+}
+
+.actions a,
+.actions button {
+	border: 0;
+	border-radius: 0.5rem;
+	padding: 0.5rem 0.7rem;
+	text-decoration: none;
+	background: #1d4ed8;
+	color: #fff;
+	cursor: pointer;
+}
+
+.actions button {
+	background: #0f766e;
+}
+
+.empty-state {
+	color: #64748b;
+}

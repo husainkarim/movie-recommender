@@ -1,0 +1,104 @@
+.auth-page {
+	min-height: calc(100dvh - 2.5rem);
+	display: grid;
+	place-items: center;
+}
+
+.auth-card {
+	width: min(100%, 29rem);
+	border-radius: 1rem;
+	padding: 2rem;
+	background: #ffffff;
+	box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+}
+
+h1 {
+	margin: 0;
+	font-size: 1.9rem;
+}
+
+.subtitle {
+	color: #475569;
+	margin: 0.5rem 0 1.4rem;
+}
+
+form {
+	display: grid;
+	gap: 0.55rem;
+}
+
+label {
+	margin-top: 0.75rem;
+	font-weight: 600;
+}
+
+input {
+	border: 1px solid #cbd5e1;
+	border-radius: 0.6rem;
+	padding: 0.72rem;
+	font-size: 0.95rem;
+}
+
+input:focus {
+	outline: none;
+	border-color: #2563eb;
+	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+button {
+	margin-top: 1rem;
+	border: 0;
+	border-radius: 0.6rem;
+	background: #1d4ed8;
+	color: #fff;
+	font-weight: 600;
+	padding: 0.78rem;
+	cursor: pointer;
+}
+
+.oauth-actions {
+	margin-top: 1rem;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 0.6rem;
+}
+
+.oauth {
+	margin: 0;
+	font-size: 0.9rem;
+}
+
+.oauth.google {
+	background: #db4437;
+}
+
+.oauth.github {
+	background: #24292e;
+}
+
+.error-message {
+	margin: 0;
+	color: #b91c1c;
+	font-size: 0.85rem;
+}
+
+.switch-auth {
+	margin: 1rem 0 0;
+	color: #475569;
+}
+
+.switch-auth a {
+	color: #1d4ed8;
+	text-decoration: none;
+	font-weight: 600;
+}
+
+@media (max-width: 650px) {
+	.auth-card {
+		padding: 1.5rem;
+	}
+
+	.oauth-actions {
+		grid-template-columns: 1fr;
+	}
+}

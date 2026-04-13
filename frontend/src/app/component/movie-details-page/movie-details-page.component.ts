@@ -1,12 +1,101 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { Movie } from '../../model/movie.model';
+import { MovieService } from '../../service/movie.service';
+import { ApiService } from '../../service/api.service';
+import { AuthService } from '../../service/auth.service';
+import { AppRatingChartComponent } from '../app-rating-chart/app-rating-chart.component';
 
 @Component({
   selector: 'app-movie-details-page',
   standalone: true,
-  imports: [],
+  imports: [RouterLink, AppRatingChartComponent],
   templateUrl: './movie-details-page.component.html',
   styleUrl: './movie-details-page.component.scss'
 })
-export class MovieDetailsPageComponent {
+export class MovieDetailsPageComponent implements OnInit {
+  movie?: Movie;
+  ratingOptions = [1, 2, 3, 4, 5];
+  selectedRating = 0;
+  shareMessage = '';
+
+  constructor(
+    private readonly route: ActivatedRoute,
+    private readonly movieService: MovieService,
+    private readonly apiService: ApiService,
+    private readonly authService: AuthService
+  ) {
+  }
+
+  ngOnInit(): void {
+    const movieId = Number(this.route.snapshot.paramMap.get('id'));
+    this.apiService.getMovieDetails(movieId).subscribe({
+      next: (response) => {
+        console.log(response.message);
+        this.movie = response.movie;
+      },
+      error: (error) => {
+        console.error('Failed to load movie details:', error.message);
+      }
+    });
+    this.selectedRating = this.movieService.getUserRating(this.movie!);
+  }
+
+  toggleWatchlist(): void {
+    if (!this.movie) {
+      return;
+    }
+
+    this.movieService.toggleWatchlist(this.movie.id);
+  }
+
+  isInWatchlist(): boolean {
+    if (!this.movie) {
+      return false;
+    }
+
+    return this.movieService.isInWatchlist(this.movie.id);
+  }
+
+  shareMovie(): void {
+    if (!this.movie) {
+      return;
+    }
+
+    this.shareMessage = this.movieService.shareRecommendation(this.movie.id);
+  }
+
+  setRating(rating: number): void {
+    if (!this.movie) {
+      return;
+    }
+    let data = {
+      movieId: this.movie.id,
+      rating: rating,
+      userId: this.authService.getUser().id
+    }
+    if (this.selectedRating === rating) {
+      // If the same rating is selected again, remove the rating
+      this.apiService.removeRating(data).subscribe({
+        next: (response) => {
+          console.log(response.message);
+          this.selectedRating = 0;
+        },
+        error: (error) => {
+          console.error('Failed to remove rating:', error.message);
+        }
+      });
+    } else {
+      this.apiService.submitRating(data).subscribe({
+        next: (response) => {
+          console.log(response.message);
+          this.selectedRating = rating;
+        },
+        error: (error) => {
+          console.error('Failed to submit rating:', error.message);
+        }
+      });
+    }
+  }
 
 }

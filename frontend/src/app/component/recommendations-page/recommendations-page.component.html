@@ -1,1 +1,28 @@
-<p>recommendations-page works!</p>
+<section class="recommendations-page">
+	<h1>Personalized Recommendations</h1>
+	<p class="subtitle">Based on your ratings and watchlist preferences.</p>
+
+	@if (shareMessage) {
+		<p class="share-message">{{ shareMessage }}</p>
+	}
+
+	<div class="cards">
+		@for (movie of recommendations; track movie.id) {
+			<article class="card">
+				<h2>{{ movie.title }}</h2>
+				<p>{{ movie.genres.join(' • ') }}</p>
+				<p>Release year: {{ movie.released }}</p>
+				<p>Community score: {{ movie.averageRating }}/5</p>
+
+				<div class="actions">
+					<a [routerLink]="['/movies', movie.id]">View details</a>
+					<button type="button" (click)="share(movie.id)">Share</button>
+				</div>
+			</article>
+		}
+	</div>
+
+	@if (!recommendations.length) {
+		<p class="empty-state">No recommendations matched your filter.</p>
+	}
+</section>

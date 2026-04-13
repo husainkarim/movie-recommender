@@ -1,10 +1,12 @@
 package backend.user_service.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,16 +14,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import backend.user_service.dto.WatchListRequest;
+import backend.user_service.model.Movie;
 import backend.user_service.model.User;
 import backend.user_service.repository.UserRepository;
 import backend.user_service.service.JwtService;
 import jakarta.annotation.security.PermitAll;
-
-import backend.user_service.dto.WatchListRequest;
-
-import org.springframework.web.bind.annotation.DeleteMapping;
-import java.util.List;
-import backend.user_service.model.Movie;
 
 @RestController
 @RequestMapping("/api/users")
@@ -61,8 +59,8 @@ public class UserController {
             response.put(MESSAGE, "Password must be at least 6 characters long");
             return ResponseEntity.badRequest().body(response);
         }
-        if (user.getRole() != null && !user.getRole().isEmpty() && !user.getRole().equals("USER") && !user.getRole().equals("ADMIN")) {
-            response.put(MESSAGE, "Invalid role. Allowed values are 'USER' or 'ADMIN'");
+        if (user.getRole() != null && !user.getRole().isEmpty() && !user.getRole().equals("User") && !user.getRole().equals("Admin")) {
+            response.put(MESSAGE, "Invalid role. Allowed values are 'User' or 'Admin'");
             return ResponseEntity.badRequest().body(response);
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -87,7 +85,9 @@ public class UserController {
             return ResponseEntity.status(401).body(response);
         }
         String token = jwtService.generateToken(existingUser.getId(), existingUser.getEmail(), existingUser.getRole());
+        existingUser.setPassword("");
         response.put("token", token);
+        response.put("user", existingUser);
         response.put(MESSAGE, "Login successful");
         return ResponseEntity.ok().body(response);
     }
@@ -104,6 +104,7 @@ public class UserController {
             return ResponseEntity.status(404).body(response);
         }
         var user = userOpt.get();
+        user.setPassword("");
         response.put("user", user);
         response.put(MESSAGE, "User profile retrieved successfully");
         return ResponseEntity.ok().body(response);

@@ -1,1 +1,35 @@
-<p>home-page works!</p>
+<section class="home-page">
+	<h1>All Movies</h1>
+	<p class="subtitle">Browse, filter, rate, and add movies to your watchlist.</p>
+
+	<app-search-bar [genres]="genres" [years]="years" (searchChanged)="onSearchChanged($event)"></app-search-bar>
+
+	@if (shareMessage) {
+		<p class="share-message">{{ shareMessage }}</p>
+	}
+
+	<div class="movie-grid">
+		@for (movie of filteredMovies; track movie.id) {
+			<article class="movie-card">
+				<div>
+					<h2>{{ movie.title }}</h2>
+					<p>{{ getGenres(movie) }}</p>
+					<p>Release year: {{ movie.released }}</p>
+					<p>Average rating: {{ movie.averageRating || 'Not rated yet' }}/5</p>
+				</div>
+
+				<div class="actions">
+					<a [routerLink]="['/movies', movie.id]">View details</a>
+					<button type="button" (click)="toggleWatchlist(movie.id)">
+						{{ isInWatchlist(movie.id) ? 'Remove from watchlist' : 'Add to watchlist' }}
+					</button>
+					<button type="button" class="secondary" (click)="shareMovie(movie.id)">Share</button>
+				</div>
+			</article>
+		}
+	</div>
+
+	@if (!filteredMovies.length) {
+		<p class="empty-state">No movies matched your search filters.</p>
+	}
+</section>

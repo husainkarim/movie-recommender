@@ -1,1 +1,40 @@
-<p>movie-details-page works!</p>
+@if (movie) {
+	<section class="details-page">
+		<a class="back-link" routerLink="/home">Back to movies</a>
+
+		<article class="details-card">
+			<h1>{{ movie.title }}</h1>
+			<p class="meta">Genres: {{ movie.genres.join(' • ') }}</p>
+			<p class="meta">Release year: {{ movie.released }}</p>
+			<p>{{ movie.tagline }}</p>
+
+			<p class="meta">Average rating: {{ movie.averageRating || 'No ratings yet' }}</p>
+			<p class="meta">Your rating: {{ selectedRating || 'Not rated yet' }}</p>
+			<app-rating-chart [ratings]="movie.rated"></app-rating-chart>
+			<div class="rating-actions">
+				@for (rating of ratingOptions; track rating) {
+					<button
+						type="button"
+						[class.active]="selectedRating === rating"
+						(click)="setRating(rating)"
+					>
+						{{ rating }}
+					</button>
+				}
+			</div>
+
+			<div class="actions">
+				<button type="button" (click)="toggleWatchlist()">
+					{{ isInWatchlist() ? 'Remove from watchlist' : 'Save to watchlist' }}
+				</button>
+				<button type="button" class="secondary" (click)="shareMovie()">Share with friend</button>
+			</div>
+
+			@if (shareMessage) {
+				<p class="share-message">{{ shareMessage }}</p>
+			}
+		</article>
+	</section>
+} @else {
+	<p>Movie not found.</p>
+}

@@ -54,8 +54,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
         
-        // Note: If this method is called, the path is considered PROTECTED.
+        String path = request.getRequestURI();
+        // ✅ SKIP PUBLIC ENDPOINTS
+        if (path.startsWith("/api/users/auth/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
+        
+        // Note: If this method is called, the path is considered PROTECTED.
         String token = jwtService.getTokenFromHeader();
         
         // If a token is present and valid, set the security context.
