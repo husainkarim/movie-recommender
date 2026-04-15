@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import backend.user_service.dto.AuthRequest;
 import backend.user_service.dto.WatchListRequest;
 import backend.user_service.model.Movie;
 import backend.user_service.model.User;
@@ -41,29 +42,28 @@ public class UserController {
     // but keeping users in Neo4j allows for "Users who follow users" features later).
     @PermitAll() // Allow anyone to access registration and login endpoints
     @PostMapping("/auth/register")
-    public ResponseEntity<Map<String, Object>> registerUser(@RequestBody User user) {
+    public ResponseEntity<Map<String, Object>> registerUser(@RequestBody AuthRequest userRequest) {
         Map<String, Object> response = new HashMap<>();
-        if (user.getEmail() == null || user.getEmail().isEmpty()) {
+        if (userRequest.getEmail() == null || userRequest.getEmail().isEmpty()) {
             response.put(MESSAGE, "Email cannot be empty");
             return ResponseEntity.badRequest().body(response);
         }
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+        if (userRepository.findByEmail(userRequest.getEmail()).isPresent()) {
             response.put(MESSAGE, "Email already in use");
             return ResponseEntity.badRequest().body(response);
         }
-        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+        if (userRequest.getPassword() == null || userRequest.getPassword().isEmpty()) {
             response.put(MESSAGE, "Password cannot be empty");
             return ResponseEntity.badRequest().body(response);
         }
-        if (user.getPassword().length() < 6) {
-            response.put(MESSAGE, "Password must be at least 6 characters long");
+        if (userRequest.getPassword().length() < 8 || userRequest.getPassword().length() > 100) {
+            response.put(MESSAGE, "Password must be between 8 and 100 characters long");
             return ResponseEntity.badRequest().body(response);
         }
-        if (user.getRole() != null && !user.getRole().isEmpty() && !user.getRole().equals("User") && !user.getRole().equals("Admin")) {
-            response.put(MESSAGE, "Invalid role. Allowed values are 'User' or 'Admin'");
-            return ResponseEntity.badRequest().body(response);
-        }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        User user = new User();
+        user.setEmail(userRequest.getEmail());
+        user.setRole("User");
+        user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         userRepository.save(user);
         response.put(MESSAGE, "User registered successfully");
         return ResponseEntity.ok().body(response);
@@ -72,20 +72,19 @@ public class UserController {
     // POST /auth/login: Issue JWT tokens.
     @PermitAll() // Allow anyone to access registration and login endpoints
     @PostMapping("/auth/login")
-    public ResponseEntity<Map<String, Object>> loginUser(@RequestBody User user) {
+    public ResponseEntity<Map<String, Object>> loginUser(@RequestBody AuthRequest userRequest) {
         Map<String, Object> response = new HashMap<>();
-        var existingUserOpt = userRepository.findByEmail(user.getEmail());
+        var existingUserOpt = userRepository.findByEmail(userRequest.getEmail());
         if (existingUserOpt.isEmpty()) {
             response.put(MESSAGE, "Invalid email or password");
             return ResponseEntity.status(401).body(response);
         }
         var existingUser = existingUserOpt.get();
-        if (!passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
+        if (!passwordEncoder.matches(userRequest.getPassword(), existingUser.getPassword())) {
             response.put(MESSAGE, "Invalid email or password");
             return ResponseEntity.status(401).body(response);
         }
         String token = jwtService.generateToken(existingUser.getId(), existingUser.getEmail(), existingUser.getRole());
-        existingUser.setPassword("");
         response.put("token", token);
         response.put("user", existingUser);
         response.put(MESSAGE, "Login successful");
@@ -104,7 +103,6 @@ public class UserController {
             return ResponseEntity.status(404).body(response);
         }
         var user = userOpt.get();
-        user.setPassword("");
         response.put("user", user);
         response.put(MESSAGE, "User profile retrieved successfully");
         return ResponseEntity.ok().body(response);

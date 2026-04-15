@@ -38,7 +38,7 @@ export class RegistrationPageComponent {
     }
 
     const { email, password } = this.registrationForm.getRawValue();
-    const data = { email: email.trim(), password: password.trim(), role: 'User' };
+    const data = { email: email.trim(), password: password.trim() };
     this.ApiService.register(data).subscribe({
       next: (result) => {
         console.log('Registration successful:', result);
