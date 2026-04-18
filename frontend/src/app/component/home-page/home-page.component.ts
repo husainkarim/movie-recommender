@@ -29,6 +29,7 @@ export class HomePageComponent implements OnInit {
       next: (response) => {
         console.log(response.message);
         this.movies = response.movies;
+        console.log(this.movies);
         this.genres = response.genres.map((g: any) => g.name).sort();
         this.movieService.getGenres(this.genres);
         this.years = response.years;
