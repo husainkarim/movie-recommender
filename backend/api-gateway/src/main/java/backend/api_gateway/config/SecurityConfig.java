@@ -13,6 +13,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.firewall.HttpFirewall;
+import org.springframework.security.web.firewall.StrictHttpFirewall;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -27,6 +29,16 @@ public class SecurityConfig {
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
+
+    @Bean
+    public HttpFirewall allowColonFirewall() {
+        StrictHttpFirewall firewall = new StrictHttpFirewall();
+        // Allow the colon character used by Neo4j elementIds
+        firewall.setUnsafeAllowAnyHttpMethod(true);
+        // Sometimes colons in the path itself are blocked even if not encoded
+        // firewall.setAllowSemicolon(true); // if needed
+        return firewall;
     }
 
     @Bean

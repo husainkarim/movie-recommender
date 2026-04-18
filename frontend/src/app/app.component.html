@@ -1,9 +1,9 @@
 <div class="app-shell">
 	@if (isLoggedIn) {
 		<header class="topbar">
-			<a class="brand" routerLink="/home">Movie Recommender</a>
+			<a class="brand" routerLink="/">Movie Recommender</a>
 			<nav>
-				<a routerLink="/" routerLinkActive="active">Home</a>
+				<a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
 				<a routerLink="/ratings" routerLinkActive="active">Ratings</a>
 				<a routerLink="/recommendations" routerLinkActive="active">Recommendations</a>
 				<a routerLink="/watchlist" routerLinkActive="active">Watchlist</a>

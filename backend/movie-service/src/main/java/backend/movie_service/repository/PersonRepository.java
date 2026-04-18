@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import backend.movie_service.model.Person;
 
 @Repository
-public interface PersonRepository extends Neo4jRepository<Person, Long> {
+public interface PersonRepository extends Neo4jRepository<Person, String> {
     Optional<Person> findByName(String name);
 }

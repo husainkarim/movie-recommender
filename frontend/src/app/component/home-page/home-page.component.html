@@ -23,7 +23,7 @@
 					<button type="button" (click)="toggleWatchlist(movie.id)">
 						{{ isInWatchlist(movie.id) ? 'Remove from watchlist' : 'Add to watchlist' }}
 					</button>
-					<button type="button" class="secondary" (click)="shareMovie(movie.id)">Share</button>
+					<button type="button" class="secondary" (click)="shareMovie(movie)">Share</button>
 				</div>
 			</article>
 		}

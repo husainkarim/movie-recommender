@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 public class User {
     @Id
     @GeneratedValue
-    private Long id;
+    private String id;
     @NotBlank
     @Email(message = "Email should be valid")
     private String email;
@@ -41,12 +41,11 @@ public class User {
     private List<Rated> ratings = new ArrayList<>();
 
     @Relationship(type = "WATCHLIST", direction = Relationship.Direction.OUTGOING)
-    private Set<Movie> watchlist = new HashSet<>();
+    private Set<WatchList> watchlist = new HashSet<>();
 
     // sort the ratings by timestamp in descending order
-    public List<Rated> getRatings() {
-        ratings.sort((r1, r2) -> r2.getTimestamp().compareTo(r1.getTimestamp()));
-        return ratings;
-    }
-
+    // public List<Rated> getRatings() {
+    //     ratings.sort((r1, r2) -> r2.getTimestamp().compareTo(r1.getTimestamp()));
+    //     return ratings;
+    // }
 }

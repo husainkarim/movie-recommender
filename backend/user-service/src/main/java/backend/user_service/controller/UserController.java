@@ -62,7 +62,7 @@ public class UserController {
         }
         User user = new User();
         user.setEmail(userRequest.getEmail());
-        user.setRole("User");
+        user.setRole("USER");
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         userRepository.save(user);
         response.put(MESSAGE, "User registered successfully");
@@ -94,8 +94,9 @@ public class UserController {
 
     // GET /users/profile
     // get movies rated by the user
+    @PermitAll
     @GetMapping("/profile/{id}")
-    public ResponseEntity<Map<String, Object>> getUserProfile(@PathVariable Long id) {
+    public ResponseEntity<Map<String, Object>> getUserProfile(@PathVariable String id) {
         Map<String, Object> response = new HashMap<>();
         var userOpt = userRepository.findById(id);
         if (userOpt.isEmpty()) {
@@ -110,6 +111,7 @@ public class UserController {
 
     // add movie to watchlist
     // POST /users/watchlist
+    @PermitAll
     @PostMapping("/watchlist")
     public ResponseEntity<Map<String, Object>> addToWatchlist(@RequestBody WatchListRequest request) {
         Map<String, Object> response = new HashMap<>();
@@ -125,6 +127,7 @@ public class UserController {
 
     // remove movie from watchlist
     // DELETE /users/watchlist
+    @PermitAll
     @DeleteMapping("/watchlist")
     public ResponseEntity<Map<String, Object>> removeFromWatchlist(@RequestBody WatchListRequest request) {
         Map<String, Object> response = new HashMap<>();
@@ -140,8 +143,9 @@ public class UserController {
 
     // get watchlist
     // Get /user/{id}/watchlist
+    @PermitAll
     @GetMapping("/watchlist/{id}")
-    public ResponseEntity<Map<String, Object>> getWatchlist(@PathVariable Long id) {
+    public ResponseEntity<Map<String, Object>> getWatchlist(@PathVariable String id) {
         Map<String, Object> response = new HashMap<>();
         var userOpt = userRepository.findById(id);
         if (userOpt.isEmpty()) {

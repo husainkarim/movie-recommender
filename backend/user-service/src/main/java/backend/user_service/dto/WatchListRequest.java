@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class WatchListRequest {
-    private Long userId;
-    private Long movieId;
+    private String userId;
+    private String movieId;
 }

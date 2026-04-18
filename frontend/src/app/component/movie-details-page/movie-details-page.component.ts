@@ -28,7 +28,7 @@ export class MovieDetailsPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const movieId = Number(this.route.snapshot.paramMap.get('id'));
+    const movieId = this.route.snapshot.paramMap.get('id') || '';
     this.apiService.getMovieDetails(movieId).subscribe({
       next: (response) => {
         console.log(response.message);
@@ -38,7 +38,15 @@ export class MovieDetailsPageComponent implements OnInit {
         console.error('Failed to load movie details:', error.message);
       }
     });
-    this.selectedRating = this.movieService.getUserRating(this.movie!);
+    this.selectedRating = this.movieService.getUserRating(this.movie!) || 0;
+  }
+
+  getGenres(movie: Movie): string {
+    return movie.genres.map((g) => g.name).join(' • ') || '';
+  }
+
+  getActors(movie: Movie): string {
+    return movie.actors.map((a) => a.name).join(', ') || '';
   }
 
   toggleWatchlist(): void {
@@ -62,7 +70,7 @@ export class MovieDetailsPageComponent implements OnInit {
       return;
     }
 
-    this.shareMessage = this.movieService.shareRecommendation(this.movie.id);
+    this.movieService.shareRecommendation(this.movie);
   }
 
   setRating(rating: number): void {

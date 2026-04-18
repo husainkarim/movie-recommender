@@ -7,14 +7,17 @@ import org.springframework.stereotype.Repository;
 import backend.rating_service.model.User;
 
 @Repository
-public interface UserRepository extends Neo4jRepository<User, Long> {
-       @Query("MATCH (u:User {userId: $userId}), (m:Movie {id: $movieId}) " +
+public interface UserRepository extends Neo4jRepository<User, String> {
+       @Query("MATCH (u:User) WHERE elementId(u) = $userId " +
+              "MATCH (m:Movie) WHERE elementId(m) = $movieId " +
               "MERGE (u)-[r:RATED]->(m) " +
               "SET r.rating = $rating, r.timestamp = timestamp() " +
               "RETURN r")
-       void addRating(Long userId, Long movieId, Double rating);
+       void addRating(String userId, String movieId, Double rating);
 
-       @Query("MATCH (u:User {userId: $userId})-[r:RATED]->(m:Movie {id: $movieId}) " +
+       @Query("MATCH (u:User) WHERE elementId(u) = $userId " +
+              "MATCH (m:Movie) WHERE elementId(m) = $movieId " +
+              "MATCH (u)-[r:RATED]->(m) " +
               "DELETE r")
-       void deleteRating(Long userId, Long movieId);
+       void deleteRating(String userId, String movieId);
 }

@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 public class Movie {
     @Id
     @GeneratedValue
-    private Long id;
+    private String id;
     private String title;
     private Integer released;
     private String tagline;
@@ -39,7 +39,16 @@ public class Movie {
     private Set<ActedIn> actedInRelationships = new HashSet<>();
     
     @Relationship(type = "DIRECTED", direction = Relationship.Direction.INCOMING)
-    private Set<Person> directors = new HashSet<>();
+    private Set<Directed> directors = new HashSet<>();
+
+    @Relationship(type = "PRODUCED", direction = Relationship.Direction.INCOMING)
+    private Set<Produced> producers = new HashSet<>();
+
+    @Relationship(type = "WROTE", direction = Relationship.Direction.INCOMING)
+    private Set<Wrote> writers = new HashSet<>();
+
+    @Relationship(type = "REVIEWED", direction = Relationship.Direction.INCOMING)
+    private Set<Reviewed> reviews = new HashSet<>();
 
     @Relationship(type = "RATED", direction = Relationship.Direction.INCOMING)
     private Set<Rated> ratings = new HashSet<>();

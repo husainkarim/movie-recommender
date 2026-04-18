@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Node("User")
 public class User {
     @Id @GeneratedValue
-    private Long id;
+    private String id;
     private String email;
     private String role;
 }

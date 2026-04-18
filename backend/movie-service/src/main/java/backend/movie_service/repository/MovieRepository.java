@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import backend.movie_service.model.Movie;
 
 @Repository
-public interface MovieRepository extends Neo4jRepository<Movie, Long> {
+public interface MovieRepository extends Neo4jRepository<Movie, String> {
     Optional<Movie> findByTitle(String title);
     // get all years of movies in the database
     @Query("MATCH (m:Movie) RETURN DISTINCT m.released AS year ORDER BY year DESC")

@@ -32,7 +32,6 @@ public class RatingController {
             response.put(MESSAGE, "User not found");
             return ResponseEntity.badRequest().body(response);
         }
-        
         userRepository.addRating(ratingRequest.getUserId(), ratingRequest.getMovieId(), ratingRequest.getRating());
         response.put(MESSAGE, "Rating added successfully");
         return ResponseEntity.ok().body(response);

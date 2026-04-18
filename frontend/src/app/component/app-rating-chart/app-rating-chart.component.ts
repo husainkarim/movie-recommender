@@ -12,12 +12,17 @@ export class AppRatingChartComponent {
   @Input({ required: true }) ratings: Rate[] = [];
 
   get totalVotes(): number {
+    if (!this.ratings) {
+      return 0;
+    }
     return this.ratings.length;
   }
 
   get voteSummary(): Array<{ rating: number; count: number; percentage: number }> {
     const counts = new Map<number, number>();
-
+    if (!this.ratings) {
+      return [];
+    }
     for (const vote of this.ratings) {
       counts.set(vote.rating, (counts.get(vote.rating) ?? 0) + 1);
     }

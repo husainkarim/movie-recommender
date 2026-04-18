@@ -7,6 +7,6 @@ import backend.movie_service.model.Genre;
 import java.util.Optional;
 
 @Repository
-public interface GenreRepository extends Neo4jRepository<Genre, Long> {
+public interface GenreRepository extends Neo4jRepository<Genre, String> {
     Optional<Genre> findByName(String name);
 }

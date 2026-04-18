@@ -9,10 +9,11 @@ import org.springframework.stereotype.Repository;
 import backend.recommendation_service.model.Movie;
 
 @Repository
-public interface MovieRepository extends Neo4jRepository<Movie, Long> {
+public interface MovieRepository extends Neo4jRepository<Movie, String> {
     // Collaborative Filtering ("Users who liked this also liked...")
     // This logic finds users who have rated the same movies as you
-    @Query("MATCH (u:User {id: $userId})-[r1:RATED]->(m:Movie)<-[r2:RATED]-(other:User) " +
+    @Query("MATCH (u:User) WHERE elementId(u) = $userId " +
+        "MATCH (u)-[r1:RATED]->(m:Movie)<-[r2:RATED]-(other:User) " +
         "MATCH (other)-[r3:RATED]->(rec:Movie) " +
         "WHERE NOT (u)-[:RATED]->(rec) " +
         "AND r1.rating >= 4 AND r2.rating >= 4 AND r3.rating >= 4 " +
@@ -23,7 +24,8 @@ public interface MovieRepository extends Neo4jRepository<Movie, Long> {
     // Content-Based ("Because you liked Inception...")
     // This looks at the attributes of movies you rated highly 
     // (like Genres or Directors) and finds other movies with those same attributes.
-    @Query("MATCH (u:User {id: $userId})-[r:RATED]->(m:Movie)-[:IN_GENRE|DIRECTED]-(attribute) " +
+    @Query("MATCH (u:User) WHERE elementId(u) = $userId " +
+        "MATCH (u)-[r:RATED]->(m:Movie)-[:IN_GENRE|DIRECTED]-(attribute) " +
         "MATCH (rec:Movie)-[:IN_GENRE|DIRECTED]-(attribute) " +
         "WHERE r.rating >= 4 AND NOT (u)-[:RATED]->(rec) AND m <> rec " +
         "RETURN rec, COUNT(*) AS score " +
@@ -33,11 +35,12 @@ public interface MovieRepository extends Neo4jRepository<Movie, Long> {
     // Similarity ("Similar to this movie")
     // This is useful for the GET /similar/{movieId} endpoint.
     // It finds movies that are frequently rated highly by the same group of users.
-    @Query("MATCH (m:Movie {id: $movieId})<-[:RATED]-(u:User)-[:RATED]->(rec:Movie) " +
+    @Query("MATCH (m:Movie) WHERE elementId(m) = $movieId " +
+        "MATCH (m)<-[:RATED]-(u:User)-[:RATED]->(rec:Movie) " +
         "WHERE m <> rec " +
         "RETURN rec, COUNT(*) AS commonUsers " +
         "ORDER BY commonUsers DESC LIMIT 5")
-    List<Movie> getSimilarMovies(Long movieId);
+    List<Movie> getSimilarMovies(String movieId);
 
     // get top 5 movies by average rating
     @Query("MATCH (m:Movie)<-[r:RATED]-() " +

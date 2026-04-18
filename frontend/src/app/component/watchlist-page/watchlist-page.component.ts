@@ -15,16 +15,17 @@ export class WatchlistPageComponent {
   shareMessage = '';
 
   constructor(private readonly movieService: MovieService) {
+    this.movieService.loadWatchlist();
     this.refreshWatchlist();
   }
 
-  removeFromWatchlist(movieId: number): void {
+  removeFromWatchlist(movieId: string): void {
     this.movieService.toggleWatchlist(movieId);
     this.refreshWatchlist();
   }
 
-  share(movieId: number): void {
-    this.shareMessage = this.movieService.shareRecommendation(movieId);
+  share(movie: Movie): void {
+    this.movieService.shareRecommendation(movie);
   }
 
   private refreshWatchlist(): void {

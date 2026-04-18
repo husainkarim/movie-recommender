@@ -11,21 +11,25 @@ import backend.user_service.model.Movie;
 import backend.user_service.model.User;
 
 @Repository
-public interface UserRepository extends Neo4jRepository<User, Long> {
+public interface UserRepository extends Neo4jRepository<User, String> {
     Optional<User> findByEmail(String email);
 
     // ADD to watchlist
-    @Query("MATCH (u:User {id: $userId}), (m:Movie {id: $movieId}) " +
+    @Query("MATCH (u:User) WHERE elementId(u) = $userId " +
+        "MATCH (m:Movie) WHERE elementId(m) = $movieId " +
         "MERGE (u)-[:WATCHLIST]->(m)")
-    void addToWatchlist(Long userId, Long movieId);
+    void addToWatchlist(String userId, String movieId);
 
     // DELETE from watchlist
-    @Query("MATCH (u:User {id: $userId})-[r:WATCHLIST]->(m:Movie {id: $movieId}) " +
+    @Query("MATCH (u:User) WHERE elementId(u) = $userId " +
+        "MATCH (m:Movie) WHERE elementId(m) = $movieId " +
+        "MATCH (u)-[r:WATCHLIST]->(m) " +
         "DELETE r")
-    void removeFromWatchlist(Long userId, Long movieId);
+    void removeFromWatchlist(String userId, String movieId);
 
     // LIST movies in watchlist
-    @Query("MATCH (u:User {id: $userId})-[:WATCHLIST]->(m:Movie) " +
+    @Query("MATCH (u:User) WHERE elementId(u) = $userId " +
+        "MATCH (u)-[:WATCHLIST]->(m:Movie) " +
         "RETURN m")
-    List<Movie> findWatchlistByUserId(Long userId);
+    List<Movie> findWatchlistByUserId(String userId);
 }

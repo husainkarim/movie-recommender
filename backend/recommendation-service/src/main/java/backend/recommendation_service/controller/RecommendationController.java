@@ -57,7 +57,7 @@ public class RecommendationController {
     // this is useful for the GET /similar/{movieId} endpoint.
     // It finds movies that are frequently rated highly by the same group of users.
     @GetMapping("/similar/{movieId}")
-    public ResponseEntity<Map<String, Object>> getSimilarMovies(@PathVariable Long movieId) {
+    public ResponseEntity<Map<String, Object>> getSimilarMovies(@PathVariable String movieId) {
         Map<String, Object> response = new HashMap<>();
         var recommendations = movieRepository.getSimilarMovies(movieId);
         if (recommendations.isEmpty()) {

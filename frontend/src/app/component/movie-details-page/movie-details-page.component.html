@@ -1,13 +1,16 @@
 @if (movie) {
 	<section class="details-page">
-		<a class="back-link" routerLink="/home">Back to movies</a>
+		<a class="back-link" routerLink="/">Back to movies</a>
 
 		<article class="details-card">
 			<h1>{{ movie.title }}</h1>
-			<p class="meta">Genres: {{ movie.genres.join(' • ') }}</p>
+			<p class="meta">Genres: {{ getGenres(movie) }}</p>
 			<p class="meta">Release year: {{ movie.released }}</p>
 			<p>{{ movie.tagline }}</p>
-
+      <p>Actors:</p>
+      @for (actor of movie.actors; track actor.id) {
+        <p class="meta">- {{ actor.name }}</p>
+      }
 			<p class="meta">Average rating: {{ movie.averageRating || 'No ratings yet' }}</p>
 			<p class="meta">Your rating: {{ selectedRating || 'Not rated yet' }}</p>
 			<app-rating-chart [ratings]="movie.rated"></app-rating-chart>

@@ -76,5 +76,8 @@ public class JwtService {
     public String getRoleFromToken(String token) {
         return getClaims(token).get("role", String.class);
     }
+    public String getIdFromToken(String token) {
+        return getClaims(token).get("userId", String.class);
+    }
 }
 

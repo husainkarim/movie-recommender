@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class Rated {
 
     @RelationshipId
-    private Long id;
+    private String id;
     
     private Double rating; // e.g., 1.0 to 5.0
     private Date timestamp= new Date();

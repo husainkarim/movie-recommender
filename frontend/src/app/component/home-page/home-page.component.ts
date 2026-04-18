@@ -3,13 +3,12 @@ import { RouterLink } from '@angular/router';
 import { Movie, MovieSearchCriteria } from '../../model/movie.model';
 import { MovieService } from '../../service/movie.service';
 import { SearchBarComponent } from '../search-bar/search-bar.component';
-import { AppRatingChartComponent } from '../app-rating-chart/app-rating-chart.component';
 import { ApiService } from '../../service/api.service';
 
 @Component({
   selector: 'app-home-page',
   standalone: true,
-  imports: [SearchBarComponent, AppRatingChartComponent, RouterLink],
+  imports: [SearchBarComponent, RouterLink],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss'
 })
@@ -30,7 +29,7 @@ export class HomePageComponent implements OnInit {
       next: (response) => {
         console.log(response.message);
         this.movies = response.movies;
-        this.genres = response.genres;
+        this.genres = response.genres.map((g: any) => g.name).sort();
         this.movieService.getGenres(this.genres);
         this.years = response.years;
         this.movieService.getYears(this.years);
@@ -47,16 +46,16 @@ export class HomePageComponent implements OnInit {
     this.filteredMovies = this.movieService.filterMovies(criteria, this.movies);
   }
 
-  toggleWatchlist(movieId: number): void {
+  toggleWatchlist(movieId: string): void {
     this.movieService.toggleWatchlist(movieId);
   }
 
-  isInWatchlist(movieId: number): boolean {
+  isInWatchlist(movieId: string): boolean {
     return this.movieService.isInWatchlist(movieId);
   }
 
-  shareMovie(movieId: number): void {
-    this.shareMessage = this.movieService.shareRecommendation(movieId);
+  shareMovie(movie: Movie): void {
+    this.movieService.shareRecommendation(movie);
   }
 
 }

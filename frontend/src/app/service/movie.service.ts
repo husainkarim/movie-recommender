@@ -15,9 +15,7 @@ export class MovieService {
   constructor(
     private readonly apiService: ApiService,
     private readonly authService: AuthService
-  ) {
-    this.loadWatchlist();
-  }
+  ) { }
 
   loadWatchlist(): void {
         this.apiService.getWatchlist(this.authService.getUser().id).subscribe({
@@ -40,20 +38,20 @@ export class MovieService {
     });
   }
 
-  toggleWatchlist(movieId: number): void {
+  toggleWatchlist(movieId: string): void {
     if (this.isInWatchlist(movieId)) {
       this.removeFromWatchlist(movieId);
     } else {
       this.addToWatchlist(movieId);
     }
-    this.loadWatchlist();
   }
 
-  addToWatchlist(movieId: number): void {
+  addToWatchlist(movieId: string): void {
     let data = { userId: this.authService.getUser().id, movieId: movieId };
     this.apiService.addToWatchlist(data).subscribe({
       next: (response) => {
         console.log(response.message);
+        this.loadWatchlist();
       },
       error: (err) => {
         console.error('Failed to toggle watchlist:', err);
@@ -61,11 +59,12 @@ export class MovieService {
     });
   }
 
-  removeFromWatchlist(movieId: number): void {
+  removeFromWatchlist(movieId: string): void {
     let data = { userId: this.authService.getUser().id, movieId: movieId };
     this.apiService.removeFromWatchlist(data).subscribe({
       next: (response) => {
         console.log(response.message);
+        this.loadWatchlist();
       },
       error: (err) => {
         console.error('Failed to remove from watchlist:', err);
@@ -73,7 +72,7 @@ export class MovieService {
     });
   }
 
-  isInWatchlist(movieId: number): boolean {
+  isInWatchlist(movieId: string): boolean {
     return this.Watchlist.some(movie => movie.id === movieId);
   }
 
@@ -107,13 +106,39 @@ export class MovieService {
     return this.recommendedMovies;
   }
 
-  shareRecommendation(movieId: number): string {
-    // Implement logic to share movie recommendation
+  shareRecommendation(movie: Movie): void {
+    const shareUrl = `${globalThis.location.origin}/movies/${movie.id}`;
+    const shareData = {
+      title: movie.title,
+      text: `Check out "${movie.title}" on Neo4flix!`,
+      url: shareUrl
+    };
 
-    return `Check out this movie with ID: ${movieId}!`;
+    // Check if the browser supports native sharing (mobile/Safari/Chrome)
+    if (navigator.share) {
+      navigator.share(shareData)
+        .then(() => console.log('Movie shared successfully'))
+        .catch((error) => console.error('Error sharing:', error));
+    } else {
+      // Fallback for Desktop: Copy to Clipboard
+      this.copyToClipboard(shareUrl);
+    }
+  }
+
+  private copyToClipboard(url: string): void {
+    navigator.clipboard.writeText(url).then(() => {
+      // You might want to use a MatSnackBar or a Toast here instead of alert
+      alert('Share link copied to clipboard!');
+    }).catch(err => {
+      console.error('Could not copy text: ', err);
+    });
   }
 
   getUserRating(movie: Movie): number {
+    // rated is not define or empty return 0
+    if (!movie.rated || movie.rated.length === 0) {
+      return 0;
+    }
     return movie.rated.find(r => r.user.id === this.authService.getUser().id)?.rating || 0;
   }
 }

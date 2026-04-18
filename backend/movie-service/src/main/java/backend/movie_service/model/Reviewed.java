@@ -1,7 +1,5 @@
 package backend.movie_service.model;
 
-import java.util.List;
-
 import org.springframework.data.neo4j.core.schema.RelationshipId;
 import org.springframework.data.neo4j.core.schema.RelationshipProperties;
 import org.springframework.data.neo4j.core.schema.TargetNode;
@@ -14,11 +12,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @RelationshipProperties
-public class ActedIn {
+public class Reviewed {
     @RelationshipId
     private String id;
-
-    private List<String> roles;
 
     @TargetNode
     private Person person;

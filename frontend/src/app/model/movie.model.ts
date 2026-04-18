@@ -1,5 +1,5 @@
 export class Movie {
-  id: number;
+  id: string;
   title: string;
   genres: Genre[];
   directors: Person[];
@@ -10,7 +10,7 @@ export class Movie {
   averageRating: number;
 
   constructor(data: {
-    id: number;
+    id: string;
     title: string;
     genres: Genre[];
     directors: Person[];
@@ -47,25 +47,25 @@ export interface RecommendationFilter {
 }
 
 export interface Person {
-  id: number;
+  id: string;
   name: string;
   birthDate: number;
 }
 
 export interface Genre {
-  id: number;
+  id: string;
   name: string;
 }
 
 export interface Rate {
-  movieId: number;
-  userId: number;
+  movieId: string;
+  userId: string;
   rating: number;
   user: User;
 }
 
 export interface User {
-  id: number;
+  id: string;
   email: string;
   role: string;
 }

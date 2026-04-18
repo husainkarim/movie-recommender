@@ -27,8 +27,8 @@ export class RecommendationsPageComponent {
     this.recommendations = this.movieService.getRecommendations();
   }
 
-  share(movieId: number): void {
-    this.shareMessage = this.movieService.shareRecommendation(movieId);
+  share(movie: Movie): void {
+    this.movieService.shareRecommendation(movie);
   }
 
 }

@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import backend.movie_service.model.Movie;
@@ -39,10 +38,7 @@ public class MovieController {
 
     // GET /movies: List movies (with pagination).
     @GetMapping("")
-    public ResponseEntity<Map<String, Object>> getListMovies(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
+    public ResponseEntity<Map<String, Object>> getListMovies() {
         Map<String, Object> response = new HashMap<>();
         try {
             response.put("movies", movieRepository.findAll());
@@ -59,7 +55,7 @@ public class MovieController {
     
     // GET /movies/{id}: Get movie details including its genre and cast.
     @GetMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> getMovieDetails(@PathVariable Long id) {
+    public ResponseEntity<Map<String, Object>> getMovieDetails(@PathVariable String id) {
         Map<String, Object> response = new HashMap<>();
         try {
             Movie movie = movieRepository.findById(id).orElse(null);
@@ -73,7 +69,7 @@ public class MovieController {
             }
         } catch (Exception e) {
             response.put(MESSAGE, "Error retrieving movie details: " + e.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(response, HttpStatus.REQUEST_TIMEOUT);
         }
     }
     // POST /movies: Add new movies to Neo4j.
@@ -87,13 +83,13 @@ public class MovieController {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (Exception e) {
             response.put(MESSAGE, "Error adding movie: " + e.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(response, HttpStatus.REQUEST_TIMEOUT);
         }
     }
     
     // GET /persons/{id}: Get actor/director details and their filmography.
     @GetMapping("/persons/{id}")
-    public ResponseEntity<Map<String, Object>> getPersonDetails(@PathVariable Long id) {
+    public ResponseEntity<Map<String, Object>> getPersonDetails(@PathVariable String id) {
         Map<String, Object> response = new HashMap<>();
         try {
             Person person = personRepository.findById(id).orElse(null);
@@ -107,7 +103,7 @@ public class MovieController {
             }
         } catch (Exception e) {
             response.put(MESSAGE, "Error retrieving person details: " + e.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(response, HttpStatus.REQUEST_TIMEOUT);
         }
     }
 }

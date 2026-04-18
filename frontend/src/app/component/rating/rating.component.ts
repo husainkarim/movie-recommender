@@ -38,11 +38,15 @@ export class RatingComponent implements OnInit {
     });
   }
 
+  getGenres(movie: Movie): string {
+    return movie.genres.map((g) => g.name).join(' • ') || '';
+  }
+
   getUserRating(movie: Movie): number {
     return this.movieService.getUserRating(movie);
   }
 
-  setRating(movieId: number, rating: number): void {
+  setRating(movieId: string, rating: number): void {
     let movie = this.movies.find(m => m.id === movieId);
     if (!movie) {
       console.error('Movie not found for rating:', movieId);
