@@ -15,6 +15,9 @@ import { AuthService } from '../../service/auth.service';
 export class RatingComponent implements OnInit {
   readonly ratingOptions = [1, 2, 3, 4, 5];
   movies: Movie[] = [];
+  isLoading = false;
+  pendingMovieId = '';
+  statusMessage = '';
 
   constructor(
     private readonly movieService: MovieService,
@@ -27,13 +30,26 @@ export class RatingComponent implements OnInit {
   }
 
   loadMovies(): void {
+    this.isLoading = true;
     this.apiService.getMovies().subscribe({
       next: (response) => {
         console.log(response.message);
         this.movies = response.movies;
+        // sort the movies by title and your rating
+        this.movies.sort((a, b) => {
+          const ratingA = this.movieService.getUserRating(a);
+          const ratingB = this.movieService.getUserRating(b);
+          if (ratingA === ratingB) {
+            return a.title.localeCompare(b.title);
+          }
+          return ratingB - ratingA; // higher ratings first
+        });
+        this.isLoading = false;
       },
       error: (error) => {
         console.error('Failed to load movies:', error.message);
+        this.statusMessage = 'Could not load ratings at the moment.';
+        this.isLoading = false;
       }
     });
   }
@@ -47,9 +63,11 @@ export class RatingComponent implements OnInit {
   }
 
   setRating(movieId: string, rating: number): void {
+    this.pendingMovieId = movieId;
     let movie = this.movies.find(m => m.id === movieId);
     if (!movie) {
       console.error('Movie not found for rating:', movieId);
+      this.pendingMovieId = '';
       return;
     }
     let selectedRating = this.getUserRating(movie);
@@ -65,9 +83,14 @@ export class RatingComponent implements OnInit {
         next: (response) => {
           console.log(response.message);
           selectedRating = 0;
+          this.statusMessage = 'Rating removed.';
+          this.pendingMovieId = '';
+          this.loadMovies();
         },
         error: (error) => {
           console.error('Failed to remove rating:', error.message);
+          this.statusMessage = 'Unable to update your rating right now.';
+          this.pendingMovieId = '';
         }
       });
     } else {
@@ -75,13 +98,17 @@ export class RatingComponent implements OnInit {
         next: (response) => {
           console.log(response.message);
           selectedRating = rating;
+          this.statusMessage = `Saved ${rating}/5 for ${movie.title}.`;
+          this.pendingMovieId = '';
+          this.loadMovies();
         },
         error: (error) => {
           console.error('Failed to submit rating:', error.message);
+          this.statusMessage = 'Unable to submit your rating right now.';
+          this.pendingMovieId = '';
         }
       });
     }
-    this.loadMovies(); // Refresh movies to update ratings
   }
 
 }

@@ -1,3 +1,10 @@
+.header-row {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 1rem;
+}
+
 .home-page h1 {
 	margin: 0;
 	font-size: 2rem;
@@ -8,9 +15,25 @@
 	color: #475569;
 }
 
+.result-count {
+	margin: 0;
+	padding: 0.3rem 0.65rem;
+	border-radius: 999px;
+	background: #e7efff;
+	color: #1f4aa7;
+	font-size: 0.82rem;
+	font-weight: 700;
+}
+
 .share-message {
 	margin: 0.75rem 0;
 	color: #0f766e;
+	font-weight: 600;
+}
+
+.error-message {
+	margin: 0.75rem 0;
+	color: #b91c1c;
 	font-weight: 600;
 }
 
@@ -30,6 +53,7 @@
 	border: 1px solid #dbe3ef;
 	border-radius: 0.8rem;
 	padding: 1rem;
+	box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
 }
 
 .movie-card h2 {
@@ -70,7 +94,41 @@
 	background: #475569;
 }
 
+.hidden {
+	display: none;
+}
+
+.loading-card {
+	gap: 0.65rem;
+}
+
+.loading-line {
+	height: 0.8rem;
+	border-radius: 999px;
+	background: linear-gradient(90deg, #e2e8f0, #f1f5f9, #e2e8f0);
+	background-size: 200% 100%;
+	animation: pulse-shift 1.1s linear infinite;
+}
+
+.loading-line.title {
+	height: 1.05rem;
+	width: 72%;
+}
+
+.loading-line.short {
+	width: 55%;
+}
+
 .empty-state {
 	margin-top: 1rem;
 	color: #64748b;
+}
+
+@keyframes pulse-shift {
+	from {
+		background-position: 200% 0;
+	}
+	to {
+		background-position: 0 0;
+	}
 }

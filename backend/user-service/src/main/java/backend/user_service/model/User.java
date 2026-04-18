@@ -42,10 +42,4 @@ public class User {
 
     @Relationship(type = "WATCHLIST", direction = Relationship.Direction.OUTGOING)
     private Set<WatchList> watchlist = new HashSet<>();
-
-    // sort the ratings by timestamp in descending order
-    // public List<Rated> getRatings() {
-    //     ratings.sort((r1, r2) -> r2.getTimestamp().compareTo(r1.getTimestamp()));
-    //     return ratings;
-    // }
 }

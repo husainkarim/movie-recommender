@@ -1,6 +1,23 @@
+.header-row {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 1rem;
+}
+
 .subtitle {
 	margin: 0.35rem 0 1rem;
 	color: #475569;
+}
+
+.watchlist-count {
+	margin: 0;
+	padding: 0.3rem 0.62rem;
+	border-radius: 999px;
+	background: #e7efff;
+	color: #1f4aa7;
+	font-size: 0.82rem;
+	font-weight: 700;
 }
 
 .share-message {
@@ -19,6 +36,7 @@
 	border: 1px solid #dbe3ef;
 	border-radius: 0.75rem;
 	padding: 0.9rem;
+	box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
 }
 
 .watchlist-card h2 {
@@ -48,6 +66,12 @@
 
 .actions .secondary {
 	background: #0f766e;
+}
+
+@media (max-width: 760px) {
+	.header-row {
+		flex-direction: column;
+	}
 }
 
 .empty-state {

@@ -66,6 +66,11 @@ button:hover {
 	background: #1d4ed8;
 }
 
+button:disabled {
+	opacity: 0.7;
+	cursor: wait;
+}
+
 .error-message {
 	margin: 0;
 	color: #b91c1c;

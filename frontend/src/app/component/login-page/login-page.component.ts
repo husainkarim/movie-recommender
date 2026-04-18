@@ -25,6 +25,7 @@ export class LoginPageComponent {
   });
 
   errorMessage = '';
+  isSubmitting = false;
 
   constructor(
     private readonly authService: AuthService,
@@ -39,14 +40,18 @@ export class LoginPageComponent {
     }
 
     const { email, password } = this.loginForm.getRawValue();
+    this.isSubmitting = true;
+    this.errorMessage = '';
     this.apiService.login({ email, password }).subscribe({
       next: (response) => {
         console.log(response.message);
         this.authService.login({ user: response.user, token: response.token });
         this.router.navigate(['/']);
+        this.isSubmitting = false;
       },
       error: (err) => {
         this.errorMessage = err.error?.message || 'An error occurred during login.';
+        this.isSubmitting = false;
       }
     });
   }

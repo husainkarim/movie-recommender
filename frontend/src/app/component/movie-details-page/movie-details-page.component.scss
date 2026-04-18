@@ -21,6 +21,11 @@
 	color: #475569;
 }
 
+.loading-text {
+	color: #64748b;
+	font-weight: 600;
+}
+
 .rating-actions {
 	display: flex;
 	gap: 0.5rem;
@@ -53,4 +58,10 @@
 .share-message {
 	margin: 0.85rem 0 0;
 	color: #0f766e;
+}
+
+.info-message {
+	margin: 0.7rem 0 0;
+	color: #1d4ed8;
+	font-weight: 600;
 }

@@ -1,16 +1,22 @@
 import { Injectable } from '@angular/core';
-import { Movie, MovieSearchCriteria } from '../model/movie.model';
+import { Movie, MovieSearchCriteria, User, WatchList } from '../model/movie.model';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
+import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MovieService {
-  Watchlist: Movie[] = [];
+  private watchlistSubject = new BehaviorSubject<WatchList[]>([]);
+  watchlist$ = this.watchlistSubject.asObservable();
+  watchlist: Movie[] = [];
   geners: string[] = [];
   years: number[] = [];
+  private recommendedMoviesSubject = new BehaviorSubject<Movie[]>([]);
+  recommendedMovies$ = this.recommendedMoviesSubject.asObservable();
   recommendedMovies: Movie[] = [];
+  user: User = new User({ id: '', email: '', role: '', ratings: [], watchlist: [] });
 
   constructor(
     private readonly apiService: ApiService,
@@ -18,15 +24,7 @@ export class MovieService {
   ) { }
 
   loadWatchlist(): void {
-        this.apiService.getWatchlist(this.authService.getUser().id).subscribe({
-      next: (response) => {
-        console.log(response.message);
-        this.Watchlist = response.watchlist;
-      },
-      error: (err) => {
-        console.error('Failed to load watchlist:', err);
-      }
-    });
+    this.getUserInfo(this.authService.getUser().id);
   }
 
   filterMovies(criteria: MovieSearchCriteria, movies: Movie[]): Movie[] {
@@ -73,7 +71,7 @@ export class MovieService {
   }
 
   isInWatchlist(movieId: string): boolean {
-    return this.Watchlist.some(movie => movie.id === movieId);
+    return this.watchlist.some(movie => movie.id === movieId);
   }
 
   getGenres(list: string[]): void {
@@ -96,8 +94,8 @@ export class MovieService {
   getRecommendations(): Movie[] {
     this.apiService.getContentBasedRecommendations(this.authService.getUser().id).subscribe({
       next: (response) => {
-        console.log(response.message);
         this.recommendedMovies = response.recommendations;
+        this.recommendedMoviesSubject.next(this.recommendedMovies);
       },
       error: (err) => {
         console.error('Failed to fetch recommendations:', err);
@@ -135,10 +133,24 @@ export class MovieService {
   }
 
   getUserRating(movie: Movie): number {
-    // rated is not define or empty return 0
-    if (!movie.rated || movie.rated.length === 0) {
+    // ratings is not define or empty return 0
+    if (!movie.ratings || movie.ratings.length === 0) {
       return 0;
     }
-    return movie.rated.find(r => r.user.id === this.authService.getUser().id)?.rating || 0;
+    return movie.ratings.find(r => r.user.id === this.authService.getUser().id)?.rating || 0;
+  }
+
+  getUserInfo(id: string): void {
+    this.apiService.getProfile(id).subscribe({
+      next: (response) => {
+        console.log(response.message);
+        this.user = response.user;
+        this.watchlistSubject.next(this.user.watchlist);
+        this.watchlist = this.user.watchlist.map((wl: WatchList) => wl.movie);
+      },
+      error: (err) => {
+        console.error('Failed to fetch user info:', err);
+      }
+    });
   }
 }

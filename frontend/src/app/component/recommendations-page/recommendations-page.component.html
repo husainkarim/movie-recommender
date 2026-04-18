@@ -1,16 +1,32 @@
 <section class="recommendations-page">
-	<h1>Personalized Recommendations</h1>
-	<p class="subtitle">Based on your ratings and watchlist preferences.</p>
+	<div class="header-row">
+		<div>
+			<h1>Personalized Recommendations</h1>
+			<p class="subtitle">Based on your ratings and watchlist preferences.</p>
+		</div>
+		<button type="button" (click)="updateRecommendations()">Refresh</button>
+	</div>
 
 	@if (shareMessage) {
 		<p class="share-message">{{ shareMessage }}</p>
 	}
 
-	<div class="cards">
+	@if (isLoading) {
+		<div class="cards" aria-hidden="true">
+			@for (placeholder of [1, 2, 3]; track placeholder) {
+				<article class="card loading-card">
+					<div class="loading-line title"></div>
+					<div class="loading-line"></div>
+					<div class="loading-line short"></div>
+				</article>
+			}
+		</div>
+	}
+
+	<div class="cards" [class.hidden]="isLoading">
 		@for (movie of recommendations; track movie.id) {
 			<article class="card">
 				<h2>{{ movie.title }}</h2>
-				<p>{{ movie.genres.join(' • ') }}</p>
 				<p>Release year: {{ movie.released }}</p>
 				<p>Community score: {{ movie.averageRating }}/5</p>
 
@@ -22,7 +38,7 @@
 		}
 	</div>
 
-	@if (!recommendations.length) {
+	@if (!isLoading && !recommendations.length) {
 		<p class="empty-state">No recommendations matched your filter.</p>
 	}
 </section>

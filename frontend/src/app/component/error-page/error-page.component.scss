@@ -1,9 +1,10 @@
 .error-container {
-	max-width: 400px;
-	margin: 100px auto;
+	max-width: 460px;
+	margin: 90px auto;
 	background: #fff;
 	border-radius: 14px;
-	box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+	border: 1px solid #dbe3ef;
+	box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
 	padding: 40px 24px;
 	text-align: center;
 }
@@ -16,13 +17,13 @@
 
 .error-container h2 {
 	font-size: 1.7rem;
-	color: #333;
+	color: #1f2937;
 	margin-bottom: 18px;
 }
 
 .error-container p {
 	font-size: 1.1rem;
-	color: #666;
+	color: #475569;
 	margin-bottom: 24px;
 }
 

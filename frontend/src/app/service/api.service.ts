@@ -31,17 +31,11 @@ export class ApiService {
   }
   // add to watchlist
   addToWatchlist(request: any): Observable<any> {
-    console.log(this.authService.getToken());
     return this.http.post(`${this.baseUrl}/users/watchlist`, request, { headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${this.authService.getToken()}` } });
   }
   // remove from watchlist
   removeFromWatchlist(request: any): Observable<any> {
     return this.http.delete(`${this.baseUrl}/users/watchlist`, { body: request, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${this.authService.getToken()}` } });
-  }
-  // get watchlist
-  getWatchlist(id: string): Observable<any> {
-    console.log(this.authService.getToken());
-    return this.http.get(`${this.baseUrl}/users/watchlist/${this.encodedId(id)}`, { headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${this.authService.getToken()}` } });
   }
 
   // movie-service API calls

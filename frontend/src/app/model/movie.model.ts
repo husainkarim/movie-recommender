@@ -4,7 +4,7 @@ export class Movie {
   genres: Genre[];
   directors: Person[];
   actors: Person[];
-  rated: Rate[];
+  ratings: RateMovie[];
   released: number;
   tagline: string;
   averageRating: number;
@@ -15,23 +15,20 @@ export class Movie {
     genres: Genre[];
     directors: Person[];
     actors: Person[];
-    rated: Rate[];
+    ratings: RateMovie[];
     released: number;
     tagline: string;
+    averageRating: number;
   }) {
     this.id = data.id;
     this.title = data.title;
     this.genres = data.genres;
     this.directors = data.directors;
     this.actors = data.actors;
-    this.rated = data.rated;
+    this.ratings = data.ratings;
     this.released = data.released;
     this.tagline = data.tagline;
-    if (data.rated.length > 0) {
-      this.averageRating = data.rated.reduce((sum, r) => sum + r.rating, 0) / data.rated.length;
-    } else {
-      this.averageRating = 0;
-    }
+    this.averageRating = data.averageRating;
   }
 }
 
@@ -57,15 +54,43 @@ export interface Genre {
   name: string;
 }
 
-export interface Rate {
-  movieId: string;
-  userId: string;
+export interface RateMovie {
+  id: string;
   rating: number;
+  timestamp: number;
   user: User;
 }
 
-export interface User {
+export interface RateUser {
+  id: string;
+  rating: number;
+  timestamp: number;
+  movie: Movie;
+}
+
+export class User {
   id: string;
   email: string;
   role: string;
+  ratings: RateUser[];
+  watchlist: WatchList[];
+
+  constructor(data: {
+    id: string;
+    email: string;
+    role: string;
+    ratings: RateUser[];
+    watchlist: WatchList[];
+    }) {
+    this.id = data.id;
+    this.email = data.email;
+    this.role = data.role;
+    this.ratings = data.ratings;
+    this.watchlist = data.watchlist;
+    }
+}
+
+export interface WatchList {
+  id: string;
+  movie: Movie;
 }

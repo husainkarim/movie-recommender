@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Rate } from '../../model/movie.model';
+import { RateMovie } from '../../model/movie.model';
 
 @Component({
   selector: 'app-rating-chart',
@@ -9,7 +9,7 @@ import { Rate } from '../../model/movie.model';
   styleUrl: './app-rating-chart.component.scss'
 })
 export class AppRatingChartComponent {
-  @Input({ required: true }) ratings: Rate[] = [];
+  @Input({ required: true }) ratings: RateMovie[] = [];
 
   get totalVotes(): number {
     if (!this.ratings) {

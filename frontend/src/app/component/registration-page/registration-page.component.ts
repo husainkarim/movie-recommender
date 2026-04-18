@@ -25,6 +25,7 @@ export class RegistrationPageComponent {
 
   submittedEmail = '';
   errorMessage = '';
+  isSubmitting = false;
 
   constructor(
     private readonly ApiService: ApiService,
@@ -39,24 +40,26 @@ export class RegistrationPageComponent {
 
     const { email, password } = this.registrationForm.getRawValue();
     const data = { email: email.trim(), password: password.trim() };
+    this.isSubmitting = true;
+    this.errorMessage = '';
     this.ApiService.register(data).subscribe({
       next: (result) => {
         console.log('Registration successful:', result);
+        this.submittedEmail = data.email;
         this.errorMessage = '';
+        this.registrationForm.reset();
+        this.isSubmitting = false;
+
+        setTimeout(() => {
+          void this.router.navigate(['/login']);
+        }, 900);
       },
       error: (err) => {
         console.error('Registration failed:', err);
         this.errorMessage = err.error?.message || 'An error occurred during registration. Please try again.';
+        this.isSubmitting = false;
       }
-    })
-    this.registrationForm.reset();
-    alert('Signup successful!');
-    this.router.navigate(['/']);
-
-
-    setTimeout(() => {
-      void this.router.navigate(['/login']);
-    }, 1200);
+    });
   }
 
 }

@@ -65,4 +65,12 @@ public class Movie {
                 })
                 .collect(Collectors.toList());
     }
+
+    public Double getAverageRating() {
+        if (ratings == null || ratings.isEmpty()) return 0.0;
+        return ratings.stream()
+                .mapToDouble(Rated::getRating)
+                .average()
+                .orElse(0.0);
+    }
 }

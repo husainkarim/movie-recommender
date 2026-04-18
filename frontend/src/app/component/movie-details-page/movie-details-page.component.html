@@ -1,4 +1,6 @@
-@if (movie) {
+@if (isLoading) {
+	<p class="loading-text">Loading movie details...</p>
+} @else if (movie) {
 	<section class="details-page">
 		<a class="back-link" routerLink="/">Back to movies</a>
 
@@ -13,7 +15,7 @@
       }
 			<p class="meta">Average rating: {{ movie.averageRating || 'No ratings yet' }}</p>
 			<p class="meta">Your rating: {{ selectedRating || 'Not rated yet' }}</p>
-			<app-rating-chart [ratings]="movie.rated"></app-rating-chart>
+			<app-rating-chart [ratings]="movie.ratings"></app-rating-chart>
 			<div class="rating-actions">
 				@for (rating of ratingOptions; track rating) {
 					<button
@@ -33,11 +35,15 @@
 				<button type="button" class="secondary" (click)="shareMovie()">Share with friend</button>
 			</div>
 
+			@if (infoMessage) {
+				<p class="info-message">{{ infoMessage }}</p>
+			}
+
 			@if (shareMessage) {
 				<p class="share-message">{{ shareMessage }}</p>
 			}
 		</article>
 	</section>
 } @else {
-	<p>Movie not found.</p>
+	<p class="loading-text">Movie not found.</p>
 }

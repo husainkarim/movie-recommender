@@ -1,13 +1,11 @@
 package backend.user_service.repository;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.stereotype.Repository;
 
-import backend.user_service.model.Movie;
 import backend.user_service.model.User;
 
 @Repository
@@ -26,10 +24,4 @@ public interface UserRepository extends Neo4jRepository<User, String> {
         "MATCH (u)-[r:WATCHLIST]->(m) " +
         "DELETE r")
     void removeFromWatchlist(String userId, String movieId);
-
-    // LIST movies in watchlist
-    @Query("MATCH (u:User) WHERE elementId(u) = $userId " +
-        "MATCH (u)-[:WATCHLIST]->(m:Movie) " +
-        "RETURN m")
-    List<Movie> findWatchlistByUserId(String userId);
 }

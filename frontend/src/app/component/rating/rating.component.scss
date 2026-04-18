@@ -3,6 +3,20 @@
 	color: #475569;
 }
 
+.status-message {
+	margin: 0 0 0.75rem;
+	color: #0f766e;
+	font-weight: 600;
+}
+
+.hidden {
+	display: none;
+}
+
+.empty-message {
+	color: #64748b;
+}
+
 .rating-list {
 	display: grid;
 	gap: 0.75rem;
@@ -44,6 +58,11 @@
 	padding: 0.5rem 0.7rem;
 	cursor: pointer;
 	background: #dbe3ef;
+}
+
+.score-buttons button:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
 }
 
 .score-buttons button.active {

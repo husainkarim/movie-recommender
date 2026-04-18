@@ -2,7 +2,15 @@
 	<h1>Your Ratings</h1>
 	<p class="subtitle">Rate each movie and update your ratings any time.</p>
 
-	<div class="rating-list">
+	@if (statusMessage) {
+		<p class="status-message">{{ statusMessage }}</p>
+	}
+
+	@if (isLoading) {
+		<p class="empty-message">Loading movies for rating...</p>
+	}
+
+	<div class="rating-list" [class.hidden]="isLoading">
 		@for (movie of movies; track movie.id) {
 			<article class="rating-row">
 				<div>
@@ -15,6 +23,7 @@
 					@for (rating of ratingOptions; track rating) {
 						<button
 							type="button"
+							[disabled]="pendingMovieId === movie.id"
 							[class.active]="getUserRating(movie) === rating"
 							(click)="setRating(movie.id, rating)"
 						>
@@ -25,4 +34,8 @@
 			</article>
 		}
 	</div>
+
+	@if (!isLoading && !movies.length) {
+		<p class="empty-message">No movies found to rate.</p>
+	}
 </section>

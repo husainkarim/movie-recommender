@@ -18,6 +18,8 @@ export class HomePageComponent implements OnInit {
   genres: string[] = [];
   years: number[] = [];
   shareMessage = '';
+  isLoading = false;
+  errorMessage = '';
 
   constructor(
     private readonly apiService: ApiService,
@@ -25,16 +27,24 @@ export class HomePageComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.isLoading = true;
+    this.errorMessage = '';
     this.apiService.getMovies().subscribe({
       next: (response) => {
         console.log(response.message);
         this.movies = response.movies;
-        console.log(this.movies);
+        // sort the movies by title
+        this.movies.sort((a, b) => a.title.localeCompare(b.title));
         this.genres = response.genres.map((g: any) => g.name).sort();
         this.movieService.getGenres(this.genres);
         this.years = response.years;
         this.movieService.getYears(this.years);
         this.filteredMovies = [...this.movies];
+        this.isLoading = false;
+      },
+      error: (error) => {
+        this.errorMessage = error.error?.message || 'Could not load movies. Please try again.';
+        this.isLoading = false;
       }
     });
   }
@@ -57,6 +67,7 @@ export class HomePageComponent implements OnInit {
 
   shareMovie(movie: Movie): void {
     this.movieService.shareRecommendation(movie);
+    this.shareMessage = `Sharing ${movie.title}. If native sharing is unavailable, the link will be copied.`;
   }
 
 }

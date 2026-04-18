@@ -26,7 +26,9 @@
 				<p class="error-message">{{ errorMessage }}</p>
 			}
 
-			<button type="submit">Log in</button>
+			<button type="submit" [disabled]="isSubmitting">
+				{{ isSubmitting ? 'Signing in...' : 'Log in' }}
+			</button>
 		</form>
 
 		<p class="switch-auth">

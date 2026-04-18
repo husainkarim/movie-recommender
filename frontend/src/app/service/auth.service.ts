@@ -61,7 +61,6 @@ export class AuthService {
 
     console.log('User logged out');
     //return to login page after logout
-    globalThis.location.href = '/login';
   }
 
   private hasToken(): boolean { return !!localStorage.getItem('authToken'); }

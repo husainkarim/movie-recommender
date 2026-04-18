@@ -1,6 +1,11 @@
 <section class="watchlist-page">
-	<h1>My Watchlist</h1>
-	<p class="subtitle">Save movies for later and share recommendations with friends.</p>
+	<div class="header-row">
+		<div>
+			<h1>My Watchlist</h1>
+			<p class="subtitle">Save movies for later and share recommendations with friends.</p>
+		</div>
+		<p class="watchlist-count">{{ watchlist.length }} saved</p>
+	</div>
 
 	@if (shareMessage) {
 		<p class="share-message">{{ shareMessage }}</p>
@@ -11,7 +16,7 @@
 			@for (movie of watchlist; track movie.id) {
 				<article class="watchlist-card">
 					<h2>{{ movie.title }}</h2>
-					<p>{{ movie.genres.join(' • ') }}</p>
+					<p>{{ movie.tagline || 'No tagline available yet.' }}</p>
 					<p>Release year: {{ movie.released }}</p>
 
 					<div class="actions">
@@ -23,6 +28,6 @@
 			}
 		</div>
 	} @else {
-		<p class="empty-state">Your watchlist is empty. Add movies from the home page.</p>
+		<p class="empty-state">Your watchlist is empty. Add movies from the home page to build your list.</p>
 	}
 </section>

@@ -18,6 +18,8 @@ export class MovieDetailsPageComponent implements OnInit {
   ratingOptions = [1, 2, 3, 4, 5];
   selectedRating = 0;
   shareMessage = '';
+  isLoading = false;
+  infoMessage = '';
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -29,16 +31,21 @@ export class MovieDetailsPageComponent implements OnInit {
 
   ngOnInit(): void {
     const movieId = this.route.snapshot.paramMap.get('id') || '';
+    this.isLoading = true;
     this.apiService.getMovieDetails(movieId).subscribe({
       next: (response) => {
         console.log(response.message);
         this.movie = response.movie;
+        console.log('Loaded movie details:', this.movie?.ratings);
+        this.selectedRating = this.movie ? this.movieService.getUserRating(this.movie) : 0;
+        this.isLoading = false;
       },
       error: (error) => {
         console.error('Failed to load movie details:', error.message);
+        this.infoMessage = 'Could not load this movie right now.';
+        this.isLoading = false;
       }
     });
-    this.selectedRating = this.movieService.getUserRating(this.movie!) || 0;
   }
 
   getGenres(movie: Movie): string {
@@ -71,6 +78,7 @@ export class MovieDetailsPageComponent implements OnInit {
     }
 
     this.movieService.shareRecommendation(this.movie);
+    this.shareMessage = `Sharing ${this.movie.title}. Link copy fallback is available.`;
   }
 
   setRating(rating: number): void {
@@ -88,6 +96,7 @@ export class MovieDetailsPageComponent implements OnInit {
         next: (response) => {
           console.log(response.message);
           this.selectedRating = 0;
+          this.infoMessage = 'Your rating was removed.';
         },
         error: (error) => {
           console.error('Failed to remove rating:', error.message);
@@ -98,6 +107,7 @@ export class MovieDetailsPageComponent implements OnInit {
         next: (response) => {
           console.log(response.message);
           this.selectedRating = rating;
+          this.infoMessage = `Saved your ${rating}/5 rating.`;
         },
         error: (error) => {
           console.error('Failed to submit rating:', error.message);

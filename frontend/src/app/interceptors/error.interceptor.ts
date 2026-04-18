@@ -7,7 +7,12 @@ import { AuthService } from '../service/auth.service'; // adjust path
 export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const authService = inject(AuthService);
+  const path = req.url;
 
+  if (path.endsWith('/login') || path.endsWith('/register')) {
+    // skip error handling for auth endpoints to avoid infinite loops
+    return next(req);
+  }
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       switch (error.status) {

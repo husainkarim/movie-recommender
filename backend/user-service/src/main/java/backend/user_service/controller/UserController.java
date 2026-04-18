@@ -1,7 +1,6 @@
 package backend.user_service.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import backend.user_service.dto.AuthRequest;
 import backend.user_service.dto.WatchListRequest;
-import backend.user_service.model.Movie;
 import backend.user_service.model.User;
 import backend.user_service.repository.UserRepository;
 import backend.user_service.service.JwtService;
@@ -138,23 +136,6 @@ public class UserController {
         }
         userRepository.removeFromWatchlist(userOpt.get().getId(), request.getMovieId());
         response.put(MESSAGE, "Movie removed from watchlist");
-        return ResponseEntity.ok().body(response);
-    }
-
-    // get watchlist
-    // Get /user/{id}/watchlist
-    @PermitAll
-    @GetMapping("/watchlist/{id}")
-    public ResponseEntity<Map<String, Object>> getWatchlist(@PathVariable String id) {
-        Map<String, Object> response = new HashMap<>();
-        var userOpt = userRepository.findById(id);
-        if (userOpt.isEmpty()) {
-            response.put(MESSAGE, USER_NOT_FOUND);
-            return ResponseEntity.status(404).body(response);
-        }
-        List<Movie> watchlist = userRepository.findWatchlistByUserId(userOpt.get().getId());
-        response.put("watchlist", watchlist);
-        response.put(MESSAGE, "Watchlist retrieved successfully");
         return ResponseEntity.ok().body(response);
     }
 }

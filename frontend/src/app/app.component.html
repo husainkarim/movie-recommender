@@ -1,4 +1,11 @@
 <div class="app-shell">
+	@if (isLoading$ | async) {
+		<div class="global-loading" role="status" aria-live="polite">
+			<div class="global-loading__bar"></div>
+			<span>Syncing with Neo4j graph data...</span>
+		</div>
+	}
+
 	@if (isLoggedIn) {
 		<header class="topbar">
 			<a class="brand" routerLink="/">Movie Recommender</a>
