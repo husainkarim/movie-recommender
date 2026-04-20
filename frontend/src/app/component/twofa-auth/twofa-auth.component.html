@@ -1,0 +1,15 @@
+<div class="twofa-container">
+  <button *ngIf="!requestQR" (click)="showQRCode()">
+    Show QR Code
+  </button>
+
+  <div id="qrCode" *ngIf="requestQR">
+    <p>Scan this QR code with your 2FA app:</p>
+  </div>
+</div>
+
+<form [formGroup]="verifyForm" (ngSubmit)="confirmTwoFactor()" novalidate>
+  <label for="code">Enter 2FA code:</label>
+  <input type="text" id="code" name="code" formControlName="code" required />
+  <button type="submit">Verify</button>
+</form>

@@ -23,7 +23,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // Define the list of public paths that should *bypass* this JWT filter entirely
     private static final List<String> PUBLIC_PATHS = List.of(
         "/api/users/auth/login",
-        "/api/users/auth/register"
+        "/api/users/auth/register",
+        "/api/users/auth/2fa/verify",
+        "/api/users/auth/2fa/qr"
     );
 
     public JwtAuthenticationFilter(JwtService jwtService) {

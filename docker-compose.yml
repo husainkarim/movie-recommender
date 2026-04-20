@@ -48,10 +48,11 @@ services:
     build: ./backend/api-gateway
     image: backend/api-gateway:latest
     ports:
-      - "8080:8080"
+      - "8443:8443"
     environment:
       SPRING_PROFILES_ACTIVE: docker
       JWT_SECRET: ${JWT_SECRET}
+      KEYSTORE_PASSWORD: ${KEYSTORE_PASSWORD}
     depends_on:
       - user-service
       - movie-service

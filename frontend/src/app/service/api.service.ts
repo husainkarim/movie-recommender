@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApiService {
-  private readonly baseUrl = 'http://localhost:8080/api';
+  private readonly baseUrl = 'https://localhost:8443/api';
   constructor(
     private readonly http: HttpClient,
     private readonly authService: AuthService
@@ -24,6 +24,15 @@ export class ApiService {
   // login
   login(data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/users/auth/login`, data);
+  }
+
+  // verify 2fa after password step
+  verifyTwoFactor(data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/users/auth/2fa/verify`, data);
+  }
+
+  getQrCode(email: string): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/users/auth/2fa/qr?email=${encodeURIComponent(email)}`, { responseType: 'blob' });
   }
   // profile
   getProfile(id: string): Observable<any> {

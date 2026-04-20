@@ -6,6 +6,7 @@ import { Observable } from 'rxjs/internal/Observable';
   providedIn: 'root'
 })
 export class AuthService {
+  private preRequest: any = null;
   private user: any = null;
   private token: string | null = null;
 
@@ -31,6 +32,14 @@ export class AuthService {
     // Set initial values for reactive streams based on loaded state
     this._isLoggedInSubject.next(!!this.user);
     this._userRoleSubject.next(this.user?.role || 'guest');
+  }
+
+  prelogin(authRequest: any) {
+    this.preRequest = authRequest;
+  }
+
+  getLoginRequest() {
+    return this.preRequest;
   }
 
   login(userData: { user: any, token: string }) {

@@ -36,6 +36,10 @@ public class User {
     private String password;
     @NotBlank
     private String role;
+    
+    @JsonIgnore
+    private String twoFactorSecret;
+    private boolean twoFactorEnabled;
 
     @Relationship(type = "RATED", direction = Relationship.Direction.OUTGOING)
     private List<Rated> ratings = new ArrayList<>();

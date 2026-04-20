@@ -15,7 +15,7 @@ The application lets users register/login, browse movies, rate titles, maintain 
 
 ## Architecture Overview
 
-1. Frontend calls API Gateway at `http://localhost:8080/api`.
+1. Frontend calls API Gateway at `https://localhost:8443/api`.
 2. API Gateway validates JWT (except login/register) and routes requests by path.
 3. Domain services execute business logic and query/update Neo4j.
 4. Frontend renders results and shows loading states for potentially slower graph queries.
@@ -59,6 +59,7 @@ Project services read environment variables from root `.env`.
 Required keys:
 
 - `JWT_SECRET`: Base64-encoded JWT signing key used by gateway and user-service
+- `KEYSTORE_PASSWORD`: Password for the https certificate
 - `DB_URL`: Neo4j connection URL (for example `neo4j+s://...`)
 - `DB_USERNAME`: Neo4j username
 - `DB_PASSWORD`: Neo4j password
@@ -67,6 +68,7 @@ Example template:
 
 ```env
 JWT_SECRET=your_base64_jwt_secret
+KEYSTORE_PASSWORD=password
 DB_URL=neo4j+s://your-instance.databases.neo4j.io
 DB_USERNAME=neo4j
 DB_PASSWORD=your_password

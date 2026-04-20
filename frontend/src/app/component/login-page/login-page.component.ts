@@ -45,8 +45,8 @@ export class LoginPageComponent {
     this.apiService.login({ email, password }).subscribe({
       next: (response) => {
         console.log(response.message);
-        this.authService.login({ user: response.user, token: response.token });
-        this.router.navigate(['/']);
+        this.authService.prelogin({ authRequest: response.authRequest });
+        this.router.navigate(['/2fa']);
         this.isSubmitting = false;
       },
       error: (err) => {

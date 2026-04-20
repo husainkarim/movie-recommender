@@ -2,6 +2,7 @@ package backend.user_service.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,13 +12,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import backend.user_service.dto.AuthRequest;
+import backend.user_service.dto.TwoFactorCodeRequest;
+import backend.user_service.dto.TwoFactorSetupRequest;
+import backend.user_service.dto.TwoFactorVerifyRequest;
 import backend.user_service.dto.WatchListRequest;
 import backend.user_service.model.User;
 import backend.user_service.repository.UserRepository;
 import backend.user_service.service.JwtService;
+import backend.user_service.service.TwoFactorService;
 import jakarta.annotation.security.PermitAll;
 
 @RestController
@@ -26,14 +32,17 @@ public class UserController {
     final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final TwoFactorService twoFactorService;
     
     private static final String MESSAGE = "message";
     private static final String USER_NOT_FOUND = "User not found";
 
-    public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
+    public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService,
+        TwoFactorService twoFactorService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.twoFactorService = twoFactorService;
     }
 
     // POST /auth/register: Create a new user node in Neo4j (or a relational DB if preferred, 
@@ -62,6 +71,7 @@ public class UserController {
         user.setEmail(userRequest.getEmail());
         user.setRole("USER");
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+        user.setTwoFactorEnabled(false);
         userRepository.save(user);
         response.put(MESSAGE, "User registered successfully");
         return ResponseEntity.ok().body(response);
@@ -82,10 +92,137 @@ public class UserController {
             response.put(MESSAGE, "Invalid email or password");
             return ResponseEntity.status(401).body(response);
         }
+        // send secret to user via email or display QR code for authenticator app setup
+        // for demo purposes, we'll just print it to the console and require the user to verify it on the next step
+        userRepository.save(existingUser);
+        userRequest.setPassword(null); // Don't return the password in the response
+        response.put("requires2fa", true);
+        response.put("authRequest", userRequest);
+        response.put(MESSAGE, "2FA code required");
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PermitAll() // Allow anyone to access registration and login endpoints
+    @GetMapping("/auth/2fa/qr")
+    public ResponseEntity<byte[]> getQrCode(@RequestParam String email) throws Exception {
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+        User user = userOpt.get();
+        if (!user.isTwoFactorEnabled()) {
+            String secret = twoFactorService.generateSecret();
+            user.setTwoFactorSecret(secret);
+            user.setTwoFactorEnabled(true);
+            userRepository.save(user);
+        }
+        String url = twoFactorService.buildOtpAuthUrl(email, user.getTwoFactorSecret());
+        byte[] qr = twoFactorService.generateQrCode(url);
+
+        return ResponseEntity.ok()
+            .header("Content-Type", "image/png")
+            .body(qr);
+    }
+
+    @PermitAll()
+    @PostMapping("/auth/2fa/verify")
+    public ResponseEntity<Map<String, Object>> verifyLoginWith2fa(@RequestBody TwoFactorVerifyRequest request) {
+        Map<String, Object> response = new HashMap<>();
+        var existingUserOpt = userRepository.findByEmail(request.getEmail());
+        if (existingUserOpt.isEmpty()) {
+            response.put(MESSAGE, "Invalid credentials or code");
+            return ResponseEntity.status(401).body(response);
+        }
+
+        User existingUser = existingUserOpt.get();
+
+        boolean isValidCode = twoFactorService.verifyCode(existingUser.getTwoFactorSecret(), request.getCode());
+        if (!isValidCode) {
+            response.put(MESSAGE, "Invalid 2FA code");
+            return ResponseEntity.status(401).body(response);
+        }
+
         String token = jwtService.generateToken(existingUser.getId(), existingUser.getEmail(), existingUser.getRole());
+        response.put("requires2fa", false);
         response.put("token", token);
         response.put("user", existingUser);
-        response.put(MESSAGE, "Login successful");
+        response.put(MESSAGE, "2FA verification successful");
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PermitAll
+    @PostMapping("/2fa/setup")
+    public ResponseEntity<Map<String, Object>> setupTwoFactor(@RequestBody TwoFactorSetupRequest request) {
+        Map<String, Object> response = new HashMap<>();
+        var userOpt = userRepository.findById(request.getUserId());
+        if (userOpt.isEmpty()) {
+            response.put(MESSAGE, USER_NOT_FOUND);
+            return ResponseEntity.status(404).body(response);
+        }
+
+        var user = userOpt.get();
+        String secret = twoFactorService.generateSecret();
+        user.setTwoFactorSecret(secret);
+        userRepository.save(user);
+
+        response.put("secret", secret);
+        response.put("otpauthUrl", twoFactorService.buildOtpAuthUrl(user.getEmail(), secret));
+        response.put(MESSAGE, "2FA setup generated. Verify one code to enable 2FA.");
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PermitAll
+    @PostMapping("/2fa/enable")
+    public ResponseEntity<Map<String, Object>> enableTwoFactor(@RequestBody TwoFactorCodeRequest request) {
+        Map<String, Object> response = new HashMap<>();
+        var userOpt = userRepository.findById(request.getUserId());
+        if (userOpt.isEmpty()) {
+            response.put(MESSAGE, USER_NOT_FOUND);
+            return ResponseEntity.status(404).body(response);
+        }
+
+        var user = userOpt.get();
+        if (user.getTwoFactorSecret() == null || user.getTwoFactorSecret().isBlank()) {
+            response.put(MESSAGE, "Run /2fa/setup before enabling 2FA");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        boolean isValidCode = twoFactorService.verifyCode(user.getTwoFactorSecret(), request.getCode());
+        if (!isValidCode) {
+            response.put(MESSAGE, "Invalid 2FA code");
+            return ResponseEntity.status(401).body(response);
+        }
+
+        userRepository.save(user);
+        response.put(MESSAGE, "2FA enabled successfully");
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PermitAll
+    @PostMapping("/2fa/disable")
+    public ResponseEntity<Map<String, Object>> disableTwoFactor(@RequestBody TwoFactorCodeRequest request) {
+        Map<String, Object> response = new HashMap<>();
+        var userOpt = userRepository.findById(request.getUserId());
+        if (userOpt.isEmpty()) {
+            response.put(MESSAGE, USER_NOT_FOUND);
+            return ResponseEntity.status(404).body(response);
+        }
+
+        var user = userOpt.get();
+        if (user.getTwoFactorSecret() == null) {
+            response.put(MESSAGE, "2FA is not enabled for this user");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        boolean isValidCode = twoFactorService.verifyCode(user.getTwoFactorSecret(), request.getCode());
+        if (!isValidCode) {
+            response.put(MESSAGE, "Invalid 2FA code");
+            return ResponseEntity.status(401).body(response);
+        }
+
+        user.setTwoFactorSecret(null);
+        userRepository.save(user);
+        response.put(MESSAGE, "2FA disabled successfully");
         return ResponseEntity.ok().body(response);
     }
     

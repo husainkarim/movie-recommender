@@ -7,10 +7,12 @@ import { RecommendationsPageComponent } from './component/recommendations-page/r
 import { RegistrationPageComponent } from './component/registration-page/registration-page.component';
 import { WatchlistPageComponent } from './component/watchlist-page/watchlist-page.component';
 import { ErrorPageComponent } from './component/error-page/error-page.component';
+import { TwofaAuthComponent } from './component/twofa-auth/twofa-auth.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginPageComponent },
   { path: 'register', component: RegistrationPageComponent },
+  { path: '2fa', component: TwofaAuthComponent },
   { path: '', component: HomePageComponent },
   { path: 'movies/:id', component: MovieDetailsPageComponent },
   { path: 'ratings', component: RatingComponent },

@@ -9,7 +9,7 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const path = req.url;
 
-  if (path.endsWith('/login') || path.endsWith('/register')) {
+  if (path.endsWith('/login') || path.endsWith('/register') || path.endsWith('/2fa/verify')) {
     // skip error handling for auth endpoints to avoid infinite loops
     return next(req);
   }
