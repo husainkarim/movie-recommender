@@ -107,9 +107,12 @@ npm start
 4. Open:
 
 - Frontend: `http://localhost:4200`
-- API Gateway: `http://localhost:8080`
+- API Gateway: `https://localhost:8443`
 
 ### Option B: Run everything locally without Docker
+
+The gateway defaults to Docker hostnames (`user-service`, `movie-service`, etc.).
+For local backend startup, override those gateway URLs to `localhost`.
 
 In separate terminals, run each backend service:
 
@@ -118,7 +121,12 @@ cd backend/user-service && ./mvnw spring-boot:run
 cd backend/movie-service && ./mvnw spring-boot:run
 cd backend/rating-service && ./mvnw spring-boot:run
 cd backend/recommendation-service && ./mvnw spring-boot:run
-cd backend/api-gateway && ./mvnw spring-boot:run
+cd backend/api-gateway && \
+	USER_SERVICE_URL=http://localhost:8081 \
+	MOVIE_SERVICE_URL=http://localhost:8082 \
+	RATING_SERVICE_URL=http://localhost:8083 \
+	RECOMMENDATION_SERVICE_URL=http://localhost:8084 \
+	./mvnw spring-boot:run
 ```
 
 Then run frontend:
@@ -149,7 +157,7 @@ make remove   # remove images/volumes/orphans (destructive)
 
 | Service | Port | Responsibility |
 |---|---:|---|
-| api-gateway | 8080 | JWT auth, CORS, request routing |
+| api-gateway | 8443 (HTTPS) | JWT auth, CORS, request routing |
 | user-service | 8081 | Register/login, profile, watchlist |
 | movie-service | 8082 | Movies catalog and movie details |
 | rating-service | 8083 | Create/remove ratings |
@@ -157,12 +165,14 @@ make remove   # remove images/volumes/orphans (destructive)
 
 ## API Quick Reference
 
-Base URL (via gateway): `http://localhost:8080/api`
+Base URL (via gateway): `https://localhost:8443/api`
 
 Public endpoints:
 
 - `POST /users/auth/register`
 - `POST /users/auth/login`
+- `GET /users/auth/2fa/qr?email={email}`
+- `POST /users/auth/2fa/verify`
 
 Protected endpoints (JWT required):
 
@@ -189,6 +199,7 @@ Authorization: Bearer <jwt_token>
 
 - `/login` login page
 - `/register` registration page
+- `/2fa` two-factor verification page
 - `/` home movie listing and filters
 - `/movies/:id` movie details + rating + watchlist actions
 - `/ratings` rating management
@@ -236,15 +247,18 @@ npm test
 Set token after login and include `Authorization: Bearer <token>`.
 
 2. CORS issues from frontend:
-Ensure frontend runs at `http://localhost:4200` and gateway is reachable at `http://localhost:8080`.
+Ensure frontend runs at `http://localhost:4200` and gateway is reachable at `https://localhost:8443`.
 
-3. Backend services cannot connect to Neo4j:
+3. Local gateway cannot reach services without Docker:
+Start gateway with `USER_SERVICE_URL`, `MOVIE_SERVICE_URL`, `RATING_SERVICE_URL`, and `RECOMMENDATION_SERVICE_URL` pointing to localhost ports.
+
+4. Backend services cannot connect to Neo4j:
 Verify `DB_URL`, `DB_USERNAME`, and `DB_PASSWORD` in `.env`.
 
-4. Gateway starts but routes fail:
+5. Gateway starts but routes fail:
 Check all backend services are healthy and listening on expected ports.
 
-5. Docker starts but API not reachable:
+6. Docker starts but API not reachable:
 Run `make logs` and inspect gateway/service startup errors.
 
 ## License
