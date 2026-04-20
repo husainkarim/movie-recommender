@@ -68,7 +68,6 @@ export class ApiService {
   // rating-service API calls
   // submit rating
   submitRating(request: any): Observable<any> {
-    console.log(this.authService.getToken());
     return this.http.post(`${this.baseUrl}/ratings`, request, { headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${this.authService.getToken()}` } });
   }
   // remove rating

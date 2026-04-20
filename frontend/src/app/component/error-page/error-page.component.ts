@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-
+import { NgIf } from '@angular/common';
 @Component({
   selector: 'app-error-page',
   standalone: true,
-  imports: [RouterModule],
+  imports: [RouterModule, NgIf],
   templateUrl: './error-page.component.html',
   styleUrl: './error-page.component.scss'
 })
@@ -12,6 +12,7 @@ export class ErrorPageComponent {
   errorCode: string = '';
   errorTitle: string = '';
   errorMessage: string = '';
+  loginPage: boolean = false;
 
   errors: { [key: string]: { title: string; message: string } } = {
     '400': { title: '400 - Bad Request', message: 'The server could not understand the request due to invalid syntax.' },
@@ -29,6 +30,7 @@ export class ErrorPageComponent {
   constructor() {
     const url = globalThis.location.href;
     const code = url.split('/').pop();
+    this.loginPage = code === '401';
     if (code && this.errors[code]) {
       this.errorCode = code;
       this.errorTitle = this.errors[code].title;

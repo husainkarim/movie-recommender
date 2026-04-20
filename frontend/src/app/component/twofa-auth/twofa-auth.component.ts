@@ -55,7 +55,6 @@ export class TwofaAuthComponent {
 
   confirmTwoFactor(): void {
     const code = this.verifyForm.get('code')?.value;
-    console.log('Submitting 2FA code:', code);
 
     if (!this.request) {
       console.error('No pending 2FA request found.');

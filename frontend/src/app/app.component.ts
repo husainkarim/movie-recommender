@@ -32,17 +32,8 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.authService.isLoggedIn$.subscribe(isLoggedIn => {
       this.isLoggedIn = isLoggedIn;
+      this.email = isLoggedIn ? (this.authService.getUser()?.email || '') : '';
     });
-
-    if (this.authService.isLoggedIn()) {
-      const user = this.authService.getUser();
-      this.email = user ? user.email : '';
-    } else {
-      this.email = '';
-      // redirect to login if not logged in
-      void this.router.navigate(['/login']);
-    }
-
   }
 
 
